@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 import re
 import matplotlib.pyplot as plt
 
-DATA_FOLDER = 'SentimentClassification/'
+DATA_FOLDER = '../SentimentClassification/'
 languages = ['en']  # , 'fr', 'de']
 domains = ['books', 'dvd', 'music']
 dirs = ['SentimentClassification/en/books/', 'SentimentClassification/en/dvd/', 'SentimentClassification/en/music/']
@@ -51,5 +51,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
-    # parsingData()
+    #  main()
+    parsingData()
