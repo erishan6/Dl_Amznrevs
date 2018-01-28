@@ -1,0 +1,5 @@
+SentimentClassification/*
+__pycache__/*
+*.pyc
+word2vec/*
+runs/*
