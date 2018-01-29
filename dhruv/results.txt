@@ -1,0 +1,3 @@
+books Accuracy: 0.766
+dvd Accuracy: 0.7165
+music Accuracy: 0.709

@@ -7,8 +7,9 @@ import numpy as np
 
 DATA_FOLDER = 'SentimentClassification/'
 languages = ['en']  # , 'fr', 'de']
-domains = ['books']  # , 'dvd', 'music']
-
+# domains = ['books']  # , 'dvd', 'music']
+# domains = ['dvd']  # , 'dvd', 'music']
+domains = ['music']  # , 'dvd', 'music']
 
 # filtetype can either be train or test. Rating is on index 1, review is on index 2.
 def loadDataForCNN(filetype):
