@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 DATA_FOLDER = '../SentimentClassification/'
 languages = ['en']  # , 'fr', 'de']
 domains = ['books', 'dvd', 'music']
-dirs = ['SentimentClassification/en/books/', 'SentimentClassification/en/dvd/', 'SentimentClassification/en/music/']
+dirs = ['../SentimentClassification/en/books/']#, '../SentimentClassification/en/dvd/', '../SentimentClassification/en/music/']
 files = ['pos.txt', 'neg.txt']
 
 
@@ -51,5 +51,5 @@ def main():
 
 
 if __name__ == "__main__":
-    #  main()
-    parsingData()
+    main()
+    #parsingData()
