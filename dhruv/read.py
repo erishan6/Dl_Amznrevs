@@ -2,14 +2,16 @@ import xml.etree.ElementTree as ET
 import matplotlib.pyplot as plt
 import re
 import numpy as np
+import tensorflow as tf
+import pickle
 # from gensim.models.doc2vec import LabeledSentence
 # from gensim.models import Doc2Vec
 
 DATA_FOLDER = 'SentimentClassification/'
 languages = ['en']  # , 'fr', 'de']
-# domains = ['books']  # , 'dvd', 'music']
+domains = ['books']#  , 'dvd', 'music']
 # domains = ['dvd']  # , 'dvd', 'music']
-domains = ['music']  # , 'dvd', 'music']
+#domains = ['music']  # , 'dvd', 'music']
 
 # filtetype can either be train or test. Rating is on index 1, review is on index 2.
 def loadDataForCNN(filetype):
@@ -37,11 +39,114 @@ def loadDataForDANN(filetype):
             root = tree.getroot()
             for item in root:
                 xs.append(preprocess(item[2].text))
+
                 if(int(item[1].text[0]) < 3):
                     ys.append(0)
                 else:
                     ys.append(1)
     return xs, ys
+
+def saveword2vec(filepath):
+    wordsList = []
+    wordsVectors = []
+    with open(filepath,'r',encoding='utf-8') as f:
+        line = f.readlines()
+        for l in line:
+            s = l.split()
+            wordsList.append(s[0])
+            wordsVectors.append([float(i) for i in s[1:]])
+    print (len(wordsList))
+    wordsVectors = np.array(wordsVectors)
+    wordsListArray = np.array(wordsList)
+    baseballIndex = wordsList.index('baseball')
+    print (wordsVectors[baseballIndex])
+    print (wordsVectors.shape)
+    np.save("../SentimentClassification/glove/wordsVectors.npy", wordsVectors)
+    np.save("../SentimentClassification/glove/wordsList.npy", wordsListArray)
+
+
+def loadword2vec():
+    wordsList = np.load('../SentimentClassification/glove/wordsList.npy')
+    print('Loaded the word list!')
+    print (wordsList)
+    wordsList = wordsList.tolist() #  Originally loaded as numpy array
+    wordsList = [word for word in wordsList] #  Encode words as UTF-8
+    wordsVectors = np.load('../SentimentClassification/glove/wordsVectors.npy')
+    print ('Loaded the word vectors!')
+    print (wordsVectors)
+
+def testEmbedding():
+    wordsList = np.load('../SentimentClassification/glove/wordsList.npy')
+    print('Loaded the word list!')
+    print (wordsList)
+    wordsList = wordsList.tolist() #  Originally loaded as numpy array
+    wordsList = [word for word in wordsList] #  Encode words as UTF-8
+    wordsVectors = np.load('../SentimentClassification/glove/wordsVectors.npy')
+    print ('Loaded the word vectors!')
+    print (wordsVectors)
+    print(len(wordsList))
+    print(wordsVectors.shape)
+    baseballIndex = wordsList.index('baseball')
+    print (type(wordsVectors[baseballIndex]))
+
+    maxSeqLength = 10 #Maximum length of sentence
+    numDimensions = 300 #Dimensions for each word vector
+    firstSentence = np.zeros((maxSeqLength), dtype='int32')
+    firstSentence[0] = wordsList.index("i")
+    #firstSentence[8] and firstSentence[9] are going to be 0
+    print(firstSentence.shape)
+    print(firstSentence) #Shows the row index for each word
+    with tf.Session() as sess:
+        print(tf.nn.embedding_lookup(wordsVectors, firstSentence).eval().shape)
+
+
+
+def create_embedding_vectors(filetype):
+    maxSeqLength = 200 #Maximum length of sentence
+    numDimensions = 300 #Dimensions for each word vector
+    wordsList = np.load('../SentimentClassification/glove/wordsList.npy')
+    print('Loaded the word list!')
+    # print (wordsList)
+    wordsList = wordsList.tolist() #  Originally loaded as numpy array
+    wordsList = [word for word in wordsList] #  Encode words as UTF-8
+    wordsVectors = np.load('../SentimentClassification/glove/wordsVectors.npy')
+    print ('Loaded the word vectors!')
+    for language in languages:
+        for domain in domains:
+            xs = []
+            ys = []
+            tree = ET.parse(DATA_FOLDER + language + '/' + domain + '/' + filetype + '.review')
+            root = tree.getroot()
+            output_embedding = open(DATA_FOLDER + language + '/' + domain + '/data.pkl', 'wb')
+            y=0
+            for item in root:
+                review = preprocess(item[2].text).split()
+                firstSentence = np.zeros((maxSeqLength), dtype='int32')
+                i = 0
+                print (y)
+                y=y+1
+                for word in review:
+                    if (i==len(review)-1 or i==200):
+                        break;
+                    try:
+                        firstSentence[i] = wordsList.index(word)
+                    except ValueError as e:
+                        pass
+                    finally:
+                        pass
+                    i=i+1
+                    # print(firstSentence) #Shows the row index for each word
+                with tf.Session() as sess:
+                    # print(tf.nn.embedding_lookup(wordsVectors, firstSentence).eval().shape)
+                    xs.append(tf.nn.embedding_lookup(wordsVectors, firstSentence).eval().shape)
+                if(int(item[1].text[0]) < 3):
+                    ys.append(0)
+                else:
+                    ys.append(1)
+            data1=[xs,ys]
+            print (data1)
+            # pickle.dump(data1, output_embedding)
+            output_embedding.close()
 
 
 def batch_iter(data, batch_size, num_epochs, shuffle=True):
@@ -148,4 +253,5 @@ def computeidMatrix():
 
 
 if __name__ == '__main__':
-    computeidMatrix()
+    #computeidMatrix()
+    create_embedding_vectors("train")
