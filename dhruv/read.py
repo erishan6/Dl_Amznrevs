@@ -28,6 +28,22 @@ def loadDataForCNN(filetype):
     return xs, ys
 
 
+def loadDataForDANN(filetype):
+    xs = []
+    ys = []
+    for language in languages:
+        for domain in domains:
+            tree = ET.parse(DATA_FOLDER + language + '/' + domain + '/' + filetype + '.review')
+            root = tree.getroot()
+            for item in root:
+                xs.append(preprocess(item[2].text))
+                if(int(item[1].text[0]) < 3):
+                    ys.append(0)
+                else:
+                    ys.append(1)
+    return xs, ys
+
+
 def batch_iter(data, batch_size, num_epochs, shuffle=True):
     """
     Generates a batch iterator for a dataset.
