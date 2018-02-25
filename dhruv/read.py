@@ -30,7 +30,7 @@ def loadDataForCNN(filetype):
     return xs, ys
 
 
-def loadDataForDANN(filetype):
+def loadDataForDANN(domains, filetype):
     xs = []
     ys = []
     for language in languages:
