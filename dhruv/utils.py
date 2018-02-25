@@ -35,13 +35,14 @@ def shuffle_aligned_list(data):
     return [d[p] for d in data]
 
 
-def batch_generator(data, batch_size, shuffle=True):
+def batch_generator(data, batch_size, shuffle=False):
     """Generate batches of data.
-    
+
     Given a list of array-like objects, generate batches of a given
     size by yielding a list of array-like objects corresponding to the
     same slice of each input.
     """
+    # print(data[0])
     if shuffle:
         data = shuffle_aligned_list(data)
 

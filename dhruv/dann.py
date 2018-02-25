@@ -27,8 +27,8 @@ def data(domains):
 
 def build_model(sequence_length, vocab_size, shallow_domain_classifier=True):
     embedding_size = 128
-    # X = tf.placeholder(tf.float32, [None, 2], name='X')  # Input data
-    X = tf.placeholder(tf.int32, [None, sequence_length], name="X")
+    X = tf.placeholder(tf.int32, [None, sequence_length], name='X')  # Input data
+    # X = tf.placeholder(tf.int32, [None, sequence_length], name="X")
     Y_ind = tf.placeholder(tf.int32, [None], name='Y_ind')  # Class index
     D_ind = tf.placeholder(tf.int32, [None], name='D_ind')  # Domain index
     train = tf.placeholder(tf.bool, [], name='train')       # Switch for routing data to class predictor
@@ -42,10 +42,22 @@ def build_model(sequence_length, vocab_size, shallow_domain_classifier=True):
     embedded_chars = tf.nn.embedding_lookup(W, X)
     embedded_chars_expanded = tf.expand_dims(embedded_chars, -1)
 
+    conv2 = tf.layers.conv2d(
+      inputs=embedded_chars_expanded,
+      filters=64,
+      kernel_size=[5, 5],
+      padding="same",
+      activation=tf.nn.relu)
+    pool2 = tf.layers.max_pooling2d(inputs=conv2, pool_size=[2, 2], strides=2)
+
+    # Dense Layer
+    pool2_flat = tf.reshape(pool2, [-1, 7 * 7 * 64])
+
     # Feature extractor - single layer
-    W0 = weight_variable([2, 15])
+    print(pool2_flat.shape[1])
+    W0 = weight_variable([int(str(pool2_flat.shape[1])), 15])
     b0 = bias_variable([15])
-    F = tf.nn.relu(tf.matmul(embedded_chars_expanded, W0) + b0, name='feature')
+    F = tf.nn.relu(tf.matmul(pool2_flat, W0) + b0, name='feature')
 
     # Label predictor - single layer
     f = tf.cond(train, lambda: tf.slice(F, [0, 0], [batch_size // 2, -1]), lambda: F)
@@ -116,6 +128,8 @@ def train_and_evaluate(Xs, ys, Xt, yt, sess, train_op_name, train_loss_name, gra
 
         X0, y0 = next(S_batches)
         X1, y1 = next(T_batches)
+        print(X0[0])
+        print(X1[1])
         Xb = np.vstack([X0, X1])
         yb = np.hstack([y0, y1])
         D_labels = np.hstack([np.zeros(batch_size // 2, dtype=np.int32),
@@ -159,10 +173,10 @@ def extract_and_plot_pca_feats(sess, feat_tensor_name='feature'):
 if __name__ == '__main__':
     xs, ys, vs1 = data(["music"])
     xt, yt, vs2 = data(["books"])
-    print(ys)
+    print(len(xs))
     print(vs1)
     print(vs2)
-    build_model(xs.shape[1], max(vs1, vs2))
+    build_model(max(xs.shape[1], xt.shape[1]), max(vs1, vs2))
     sess = tf.InteractiveSession()
     train_and_evaluate(xs, ys, xt, yt, sess, 'pred_train_op', 'pred_loss', verbose=False)
     extract_and_plot_pca_feats(sess)
