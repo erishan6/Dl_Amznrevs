@@ -14,7 +14,7 @@ domains = ['books']#  , 'dvd', 'music']
 #domains = ['music']  # , 'dvd', 'music']
 
 # filtetype can either be train or test. Rating is on index 1, review is on index 2.
-def loadDataForCNN(filetype):
+def loadDataForCNN(domains, filetype):
     xs = []
     ys = []
     for language in languages:

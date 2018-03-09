@@ -19,7 +19,8 @@ batch_size = 16
 
 def data(domains):
     x_text, y = loadDataForDANN(domains, "train")
-    max_document_length = max([len(x.split(" ")) for x in x_text])
+    # max_document_length = max([len(x.split(" ")) for x in x_text])
+    max_document_length = 200
     vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
     x = np.array(list(vocab_processor.fit_transform(x_text)))
     return x, y, len(vocab_processor.vocabulary_)
@@ -28,6 +29,7 @@ def data(domains):
 def build_model(sequence_length, vocab_size, shallow_domain_classifier=True):
     embedding_size = 128
     X = tf.placeholder(tf.int32, [None, sequence_length], name='X')  # Input data
+
     # X = tf.placeholder(tf.int32, [None, sequence_length], name="X")
     Y_ind = tf.placeholder(tf.int32, [None], name='Y_ind')  # Class index
     D_ind = tf.placeholder(tf.int32, [None], name='D_ind')  # Domain index
@@ -41,7 +43,7 @@ def build_model(sequence_length, vocab_size, shallow_domain_classifier=True):
     W = tf.Variable(tf.random_uniform([vocab_size, embedding_size], -1.0, 1.0), name="W")
     embedded_chars = tf.nn.embedding_lookup(W, X)
     embedded_chars_expanded = tf.expand_dims(embedded_chars, -1)
-
+    print(embedded_chars_expanded.shape)
     conv2 = tf.layers.conv2d(
       inputs=embedded_chars_expanded,
       filters=64,
@@ -52,6 +54,7 @@ def build_model(sequence_length, vocab_size, shallow_domain_classifier=True):
 
     # Dense Layer
     pool2_flat = tf.reshape(pool2, [-1, 7 * 7 * 64])
+
 
     # Feature extractor - single layer
     print(pool2_flat.shape[1])
@@ -172,7 +175,7 @@ def extract_and_plot_pca_feats(sess, feat_tensor_name='feature'):
 
 if __name__ == '__main__':
     xs, ys, vs1 = data(["music"])
-    xt, yt, vs2 = data(["books"])
+    xt, yt, vs2 = xs, ys, vs1
     print(len(xs))
     print(vs1)
     print(vs2)
