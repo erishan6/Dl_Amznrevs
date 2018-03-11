@@ -235,12 +235,12 @@ def train_and_evaluate(training_mode, graph, model, xs, ys, xt,yt, x2,y2,num_ste
 # source_acc, target_acc, _, source_only_emb = train_and_evaluate('source', graph, model)
 # print('Source (MNIST) accuracy:', source_acc)
 # print('Target (MNIST-M) accuracy:', target_acc)
-if __name__ == '__main__':
+def training(d1, d2, d3):
     # Build the model graph
     graph = tf.get_default_graph()
-    xs, ys, vs1 = data(["music"])
-    xt,yt,vs2 = data(["books"])
-    x2,y2,vs2 = data(["dvd"])
+    xs, ys, vs1 = data([d1])
+    xt,yt,vs2 = data([d2])
+    x2,y2,vs2 = data([d3])
     print(ys[0])
     with graph.as_default():
         model = DannModel(max(vs1,vs2))
@@ -265,3 +265,6 @@ if __name__ == '__main__':
     print('Source (MNIST) accuracy:', source_acc)
     print('Target (MNIST-M) accuracy:', target_acc)
     print('Domain accuracy:', d_acc)
+
+if __name__ == '__main__':
+    training("music", "books", "dvd")
