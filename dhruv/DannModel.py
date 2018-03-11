@@ -125,7 +125,7 @@ class DannModel(object):
             self.domain_pred = tf.nn.softmax(d_logits)
             self.domain_loss = tf.nn.softmax_cross_entropy_with_logits(logits=d_logits, labels=self.domain)
 
-def train_and_evaluate(training_mode, graph, model, xs, ys, xt,yt, num_steps=8600, verbose=True):
+def train_and_evaluate(training_mode, graph, model, xs, ys, xt,yt, x2,y2,num_steps=30, verbose=True):
     """Helper to run the model with different training modes."""
 
     with tf.Session(graph=graph) as sess:
@@ -207,22 +207,23 @@ def train_and_evaluate(training_mode, graph, model, xs, ys, xt,yt, num_steps=860
                 _, batch_loss = sess.run([regular_train_op, pred_loss],
                                      feed_dict={model.X: X, model.y: y, model.train: False,
                                                 model.l: l, learning_rate: lr})
-
+        gen_source_only_batch = batch_generator([x2, y2], batch_size)
+        X0, y0 = next(gen_source_only_batch)
+        X = np.vstack([X0])
+        y = np.vstack([y0])
         # Compute final evaluation on test data
         source_acc = sess.run(label_acc,
-                            feed_dict={model.X: mnist_test, model.y: mnist.test.labels,
+                            feed_dict={model.X: X, model.y: y, model.domain: domain_labels,
                                        model.train: False})
 
         target_acc = sess.run(label_acc,
-                            feed_dict={model.X: mnistm_test, model.y: mnist.test.labels,
+                            feed_dict={model.X: X, model.y: y, model.domain: domain_labels,
                                        model.train: False})
 
         test_domain_acc = sess.run(domain_acc,
-                            feed_dict={model.X: combined_test_imgs,
-                                       model.domain: combined_test_domain, model.l: 1.0})
+                            feed_dict={model.X: X, model.y: y, model.domain: domain_labels, model.l: 1.0})
 
-        test_emb = sess.run(model.feature, feed_dict={model.X: combined_test_imgs})
-
+        test_emb = sess.run(model.feature, feed_dict={model.X: X})
     return source_acc, target_acc, test_domain_acc, test_emb
 
 
@@ -235,6 +236,7 @@ if __name__ == '__main__':
     graph = tf.get_default_graph()
     xs, ys, vs1 = data(["music"])
     xt,yt,vs2 = data(["books"])
+    x2,y2,vs2 = data(["dvd"])
     print(ys[0])
     with graph.as_default():
         model = DannModel(max(vs1,vs2))
@@ -255,7 +257,7 @@ if __name__ == '__main__':
         domain_acc = tf.reduce_mean(tf.cast(correct_domain_pred, tf.float32))
 
     print('\nDomain adaptation training')
-    source_acc, target_acc, d_acc, dann_emb = train_and_evaluate('dann', graph, model, xs, ys,xt,yt)
+    source_acc, target_acc, d_acc, dann_emb = train_and_evaluate('dann', graph, model, xs, ys,xt,yt,x2,y2)
     print('Source (MNIST) accuracy:', source_acc)
     print('Target (MNIST-M) accuracy:', target_acc)
     print('Domain accuracy:', d_acc)
