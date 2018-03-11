@@ -11,6 +11,8 @@ from sklearn.manifold import TSNE
 from flip_gradient import flip_gradient
 from utils import *
 from read import loadDataForCNN
+import time
+import os
 
 batch_size = 64
 
@@ -127,6 +129,34 @@ def train_and_evaluate(training_mode, graph, model, xs, ys, xt,yt, num_steps=860
     """Helper to run the model with different training modes."""
 
     with tf.Session(graph=graph) as sess:
+        # Output directory for models and summaries
+        timestamp = str(int(time.time()))
+        out_dir = os.path.abspath(os.path.join(os.path.curdir, "runs", timestamp))
+        print("Writing to {}\n".format(out_dir))
+
+        # Summaries for loss and accuracy
+        # pred_loss_summary = tf.summary.scalar("pred_loss", model.pred_loss)
+        # domain_loss_summary = tf.summary.scalar("domain_loss", model.domain_loss)
+        # total_loss_summary = pred_loss_summary + domain_loss_summary
+        domain_acc_summary = tf.summary.scalar("domain_accuracy", domain_acc)
+        label_acc_summary = tf.summary.scalar("label_accuracy", label_acc)
+
+        # Train Summaries
+        train_summary_op = tf.summary.merge([domain_acc_summary, label_acc_summary])
+        train_summary_dir = os.path.join(out_dir, "summaries", "train")
+        train_summary_writer = tf.summary.FileWriter(train_summary_dir, sess.graph)
+
+        # # Dev summaries
+        # dev_summary_op = tf.summary.merge([pred_loss_summary, domain_acc_summary, domain_acc_summary, label_acc_summary])
+        # dev_summary_dir = os.path.join(out_dir, "summaries", "dev")
+        # dev_summary_writer = tf.summary.FileWriter(dev_summary_dir, sess.graph)
+
+        # Checkpoint directory. Tensorflow assumes this directory already exists so we need to create it
+        checkpoint_dir = os.path.abspath(os.path.join(out_dir, "checkpoints"))
+        checkpoint_prefix = os.path.join(checkpoint_dir, "model")
+        if not os.path.exists(checkpoint_dir):
+            os.makedirs(checkpoint_dir)
+        saver = tf.train.Saver(tf.global_variables(), max_to_keep=5)
         tf.global_variables_initializer().run()
 
         # Batch generators
@@ -154,14 +184,17 @@ def train_and_evaluate(training_mode, graph, model, xs, ys, xt,yt, num_steps=860
                 X = np.vstack([X0, X1])
                 y = np.vstack([y0, y1])
 
-                _, batch_loss, dloss, ploss, d_acc, p_acc = sess.run(
-                    [dann_train_op, total_loss, domain_loss, pred_loss, domain_acc, label_acc],
+                _, batch_loss, summaries, dloss, ploss, d_acc, p_acc = sess.run(
+                    [dann_train_op, total_loss, train_summary_op, domain_loss, pred_loss, domain_acc, label_acc],
                     feed_dict={model.X: X, model.y: y, model.domain: domain_labels,
                                model.train: True, model.l: l, learning_rate: lr})
+                train_summary_writer.add_summary(summaries, i)
 
                 if verbose and i % 1 == 0:
                     print('loss: {}  d_acc: {}  p_acc: {}  p: {}  l: {}  lr: {}'.format(
                             batch_loss, d_acc, p_acc, p, l, lr))
+                    path = saver.save(sess, checkpoint_prefix, global_step=i)
+                    print("Saved model checkpoint to {}\n".format(path))
 
             elif training_mode == 'source':
                 X, y = next(gen_source_only_batch)
