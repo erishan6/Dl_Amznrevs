@@ -15,11 +15,16 @@ import time
 import os
 
 batch_size = 64
+max_document_length = 200
+sequence_length = 200
+default_num_steps = 30
+embedding_size = 128
+log_frequency = 10
+
 
 def data(domains):
     x_text, y = loadDataForCNN(domains, "train")
     # max_document_length = max([len(x.split(" ")) for x in x_text])
-    max_document_length = 200
     vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
     x = np.array(list(vocab_processor.fit_transform(x_text)))
     return x, y, len(vocab_processor.vocabulary_)
@@ -34,7 +39,6 @@ class DannModel(object):
         # X should be in the form of embedding vector
         # this is the shape after embedding layer
         # self.X = tf.placeholder(tf.uint8, [None, 28, 28, 1])
-        sequence_length = 200
         self.X = tf.placeholder(tf.int32, [None, sequence_length], name="X")
         self.y = tf.placeholder(tf.float32, [None, 2], name="y")
         self.domain = tf.placeholder(tf.float32, [None, 2], name="domain")
@@ -44,7 +48,7 @@ class DannModel(object):
         # X_input = (tf.cast(self.X, tf.float32))# - pixel_mean) / 255.
 
         #
-        embedding_size = 128
+
         # X = tf.placeholder(tf.int32, [None, sequence_length], name='X')  # Input data
 
         # X = tf.placeholder(tf.int32, [None, sequence_length], name="X")
@@ -125,7 +129,7 @@ class DannModel(object):
             self.domain_pred = tf.nn.softmax(d_logits)
             self.domain_loss = tf.nn.softmax_cross_entropy_with_logits(logits=d_logits, labels=self.domain)
 
-def train_and_evaluate(training_mode, graph, model, xs, ys, xt,yt, x2,y2,num_steps=30, verbose=True):
+def train_and_evaluate(training_mode, graph, model, xs, ys, xt,yt, x2,y2,num_steps=default_num_steps, verbose=True):
     """Helper to run the model with different training modes."""
 
     with tf.Session(graph=graph) as sess:
@@ -190,7 +194,7 @@ def train_and_evaluate(training_mode, graph, model, xs, ys, xt,yt, x2,y2,num_ste
                                model.train: True, model.l: l, learning_rate: lr})
                 train_summary_writer.add_summary(summaries, i)
 
-                if verbose and i % 1 == 0:
+                if verbose and i % log_frequency == 0:
                     print('loss: {}  d_acc: {}  p_acc: {}  p: {}  l: {}  lr: {}'.format(
                             batch_loss, d_acc, p_acc, p, l, lr))
                     path = saver.save(sess, checkpoint_prefix, global_step=i)
