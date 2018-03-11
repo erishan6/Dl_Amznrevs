@@ -129,113 +129,108 @@ class DannModel(object):
             self.domain_pred = tf.nn.softmax(d_logits)
             self.domain_loss = tf.nn.softmax_cross_entropy_with_logits(logits=d_logits, labels=self.domain)
 
-def train_and_evaluate(training_mode, graph, model, xs, ys, xt,yt, x2,y2,num_steps=default_num_steps, verbose=True):
-    """Helper to run the model with different training modes."""
-
-    with tf.Session(graph=graph) as sess:
-        # Output directory for models and summaries
-        timestamp = str(int(time.time()))
-        out_dir = os.path.abspath(os.path.join(os.path.curdir, "runs", timestamp))
-        print("Writing to {}\n".format(out_dir))
-
-        # Summaries for loss and accuracy
-        # pred_loss_summary = tf.summary.scalar("pred_loss", model.pred_loss)
-        # domain_loss_summary = tf.summary.scalar("domain_loss", model.domain_loss)
-        # total_loss_summary = pred_loss_summary + domain_loss_summary
-        domain_acc_summary = tf.summary.scalar("domain_accuracy", domain_acc)
-        label_acc_summary = tf.summary.scalar("label_accuracy", label_acc)
-
-        # Train Summaries
-        train_summary_op = tf.summary.merge([domain_acc_summary, label_acc_summary])
-        train_summary_dir = os.path.join(out_dir, "summaries", "train")
-        train_summary_writer = tf.summary.FileWriter(train_summary_dir, sess.graph)
-
-        # # Dev summaries
-        # dev_summary_op = tf.summary.merge([pred_loss_summary, domain_acc_summary, domain_acc_summary, label_acc_summary])
-        # dev_summary_dir = os.path.join(out_dir, "summaries", "dev")
-        # dev_summary_writer = tf.summary.FileWriter(dev_summary_dir, sess.graph)
-
-        # Checkpoint directory. Tensorflow assumes this directory already exists so we need to create it
-        checkpoint_dir = os.path.abspath(os.path.join(out_dir, "checkpoints"))
-        checkpoint_prefix = os.path.join(checkpoint_dir, "model")
-        if not os.path.exists(checkpoint_dir):
-            os.makedirs(checkpoint_dir)
-        saver = tf.train.Saver(tf.global_variables(), max_to_keep=5)
-        tf.global_variables_initializer().run()
-
-        # Batch generators
-        gen_source_batch = batch_generator([xs, ys], batch_size // 2)
-        gen_target_batch = batch_generator([xt, yt], batch_size // 2)
-        gen_source_only_batch = batch_generator([xs, ys], batch_size)
-        gen_target_only_batch = batch_generator([xt, yt], batch_size)
-
-        domain_labels = np.vstack([np.tile([1., 0.], [batch_size // 2, 1]),
-                                   np.tile([0., 1.], [batch_size // 2, 1])])
-
-        # Training loop
-        for i in range(num_steps):
-
-            # Adaptation param and learning rate schedule as described in the paper
-            p = float(i) / num_steps
-            l = 2. / (1. + np.exp(-10. * p)) - 1
-            lr = 0.01 / (1. + 10 * p)**0.75
-
-            # Training step
-            if training_mode == 'dann':
-
-                X0, y0 = next(gen_source_batch)
-                X1, y1 = next(gen_target_batch)
-                X = np.vstack([X0, X1])
-                y = np.vstack([y0, y1])
-
-                _, batch_loss, summaries, dloss, ploss, d_acc, p_acc = sess.run(
-                    [dann_train_op, total_loss, train_summary_op, domain_loss, pred_loss, domain_acc, label_acc],
-                    feed_dict={model.X: X, model.y: y, model.domain: domain_labels,
-                               model.train: True, model.l: l, learning_rate: lr})
-                train_summary_writer.add_summary(summaries, i)
-
-                if verbose and i % log_frequency == 0:
-                    print('loss: {}  d_acc: {}  p_acc: {}  p: {}  l: {}  lr: {}'.format(
-                            batch_loss, d_acc, p_acc, p, l, lr))
-                    path = saver.save(sess, checkpoint_prefix, global_step=i)
-                    print("Saved model checkpoint to {}\n".format(path))
-
-            elif training_mode == 'source':
-                X, y = next(gen_source_only_batch)
-                _, batch_loss = sess.run([regular_train_op, pred_loss],
-                                     feed_dict={model.X: X, model.y: y, model.train: False,
-                                                model.l: l, learning_rate: lr})
-
-            elif training_mode == 'target':
-                X, y = next(gen_target_only_batch)
-                _, batch_loss = sess.run([regular_train_op, pred_loss],
-                                     feed_dict={model.X: X, model.y: y, model.train: False,
-                                                model.l: l, learning_rate: lr})
-        gen_source_only_batch = batch_generator([x2, y2], batch_size)
-        X0, y0 = next(gen_source_only_batch)
-        X = np.vstack([X0])
-        y = np.vstack([y0])
-        # Compute final evaluation on test data
-        source_acc = sess.run(label_acc,
-                            feed_dict={model.X: X, model.y: y, model.domain: domain_labels,
-                                       model.train: False})
-
-        target_acc = sess.run(label_acc,
-                            feed_dict={model.X: X, model.y: y, model.domain: domain_labels,
-                                       model.train: False})
-
-        test_domain_acc = sess.run(domain_acc,
-                            feed_dict={model.X: X, model.y: y, model.domain: domain_labels, model.l: 1.0})
-
-        test_emb = sess.run(model.feature, feed_dict={model.X: X})
-    return source_acc, target_acc, test_domain_acc, test_emb
-
-
-# print('\nSource only training')
-# source_acc, target_acc, _, source_only_emb = train_and_evaluate('source', graph, model)
-# print('Source (MNIST) accuracy:', source_acc)
-# print('Target (MNIST-M) accuracy:', target_acc)
 def training(d1, d2, d3):
+    def train_and_evaluate(training_mode, graph, model, xs, ys, xt,yt, x2,y2,num_steps=default_num_steps, verbose=True):
+        """Helper to run the model with different training modes."""
+
+        with tf.Session(graph=graph) as sess:
+            # Output directory for models and summaries
+            timestamp = str(int(time.time()))
+            out_dir = os.path.abspath(os.path.join(os.path.curdir, "runs", timestamp))
+            print("Writing to {}\n".format(out_dir))
+
+            # Summaries for loss and accuracy
+            # pred_loss_summary = tf.summary.scalar("pred_loss", model.pred_loss)
+            # domain_loss_summary = tf.summary.scalar("domain_loss", model.domain_loss)
+            # total_loss_summary = pred_loss_summary + domain_loss_summary
+            domain_acc_summary = tf.summary.scalar("domain_accuracy", domain_acc)
+            label_acc_summary = tf.summary.scalar("label_accuracy", label_acc)
+
+            # Train Summaries
+            train_summary_op = tf.summary.merge([domain_acc_summary, label_acc_summary])
+            train_summary_dir = os.path.join(out_dir, "summaries", "train")
+            train_summary_writer = tf.summary.FileWriter(train_summary_dir, sess.graph)
+
+            # # Dev summaries
+            # dev_summary_op = tf.summary.merge([pred_loss_summary, domain_acc_summary, domain_acc_summary, label_acc_summary])
+            # dev_summary_dir = os.path.join(out_dir, "summaries", "dev")
+            # dev_summary_writer = tf.summary.FileWriter(dev_summary_dir, sess.graph)
+
+            # Checkpoint directory. Tensorflow assumes this directory already exists so we need to create it
+            checkpoint_dir = os.path.abspath(os.path.join(out_dir, "checkpoints"))
+            checkpoint_prefix = os.path.join(checkpoint_dir, "model")
+            if not os.path.exists(checkpoint_dir):
+                os.makedirs(checkpoint_dir)
+            saver = tf.train.Saver(tf.global_variables(), max_to_keep=5)
+            tf.global_variables_initializer().run()
+
+            # Batch generators
+            gen_source_batch = batch_generator([xs, ys], batch_size // 2)
+            gen_target_batch = batch_generator([xt, yt], batch_size // 2)
+            gen_source_only_batch = batch_generator([xs, ys], batch_size)
+            gen_target_only_batch = batch_generator([xt, yt], batch_size)
+
+            domain_labels = np.vstack([np.tile([1., 0.], [batch_size // 2, 1]),
+                                       np.tile([0., 1.], [batch_size // 2, 1])])
+
+            # Training loop
+            for i in range(num_steps):
+
+                # Adaptation param and learning rate schedule as described in the paper
+                p = float(i) / num_steps
+                l = 2. / (1. + np.exp(-10. * p)) - 1
+                lr = 0.01 / (1. + 10 * p)**0.75
+
+                # Training step
+                if training_mode == 'dann':
+
+                    X0, y0 = next(gen_source_batch)
+                    X1, y1 = next(gen_target_batch)
+                    X = np.vstack([X0, X1])
+                    y = np.vstack([y0, y1])
+
+                    _, batch_loss, summaries, dloss, ploss, d_acc, p_acc = sess.run(
+                        [dann_train_op, total_loss, train_summary_op, domain_loss, pred_loss, domain_acc, label_acc],
+                        feed_dict={model.X: X, model.y: y, model.domain: domain_labels,
+                                   model.train: True, model.l: l, learning_rate: lr})
+                    train_summary_writer.add_summary(summaries, i)
+
+                    if verbose and i % log_frequency == 0:
+                        print('loss: {}  d_acc: {}  p_acc: {}  p: {}  l: {}  lr: {}'.format(
+                                batch_loss, d_acc, p_acc, p, l, lr))
+                        path = saver.save(sess, checkpoint_prefix, global_step=i)
+                        print("Saved model checkpoint to {}\n".format(path))
+
+                elif training_mode == 'source':
+                    X, y = next(gen_source_only_batch)
+                    _, batch_loss = sess.run([regular_train_op, pred_loss],
+                                         feed_dict={model.X: X, model.y: y, model.train: False,
+                                                    model.l: l, learning_rate: lr})
+
+                elif training_mode == 'target':
+                    X, y = next(gen_target_only_batch)
+                    _, batch_loss = sess.run([regular_train_op, pred_loss],
+                                         feed_dict={model.X: X, model.y: y, model.train: False,
+                                                    model.l: l, learning_rate: lr})
+            gen_source_only_batch = batch_generator([x2, y2], batch_size)
+            X0, y0 = next(gen_source_only_batch)
+            X = np.vstack([X0])
+            y = np.vstack([y0])
+            # Compute final evaluation on test data
+            source_acc = sess.run(label_acc,
+                                feed_dict={model.X: X, model.y: y, model.domain: domain_labels,
+                                           model.train: False})
+
+            target_acc = sess.run(label_acc,
+                                feed_dict={model.X: X, model.y: y, model.domain: domain_labels,
+                                           model.train: False})
+
+            test_domain_acc = sess.run(domain_acc,
+                                feed_dict={model.X: X, model.y: y, model.domain: domain_labels, model.l: 1.0})
+
+            test_emb = sess.run(model.feature, feed_dict={model.X: X})
+        return source_acc, target_acc, test_domain_acc, test_emb
+
     # Build the model graph
     graph = tf.get_default_graph()
     xs, ys, vs1 = data([d1])
