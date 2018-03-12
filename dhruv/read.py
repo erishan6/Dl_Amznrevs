@@ -30,6 +30,20 @@ def loadDataForCNN(domains, filetype):
     return xs, ys
 
 
+def loadDataForDannGLOVE(domain, filetype):
+    xs = []
+    ys = []
+    for language in languages:
+        tree = ET.parse(DATA_FOLDER + language + '/' + domain + '/' + filetype + '.review')
+        root = tree.getroot()
+        for item in root:
+            xs.append(preprocess(item[2].text))
+            if(int(item[1].text[0]) < 3):
+                ys.append([0, 1])
+            else:
+                ys.append([1, 0])
+    return xs, ys
+
 def loadDataForDANN(domains, filetype):
     xs = []
     ys = []

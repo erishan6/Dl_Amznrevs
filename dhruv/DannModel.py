@@ -6,13 +6,14 @@ import tensorflow as tf
 from tensorflow.contrib import learn
 import numpy as np
 import pickle as pkl
-from sklearn.manifold import TSNE
+# from sklearn.manifold import TSNE
 
 from flip_gradient import flip_gradient
 from utils import *
-from read import loadDataForCNN
+from read import loadDataForDannGLOVE
 import time
 import os
+import pickle
 
 batch_size = 64
 max_document_length = 200
@@ -22,14 +23,14 @@ embedding_size = 128
 log_frequency = 10
 
 
-def data(domains):
-    x_text, y = loadDataForCNN(domains, "train")
+def createGloveEmbeddings(domain):
+    x_text, y = loadDataForDannGLOVE(domain, "train")
     # max_document_length = max([len(x.split(" ")) for x in x_text])
     # max_document_length = 200
     # vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
     # x = np.array(list(vocab_processor.fit_transform(x_text)))
     # return x, y, len(vocab_processor.vocabulary_)
-    wordsList = np.load('../SentimentClassification/glove/wordsList.npy')
+    wordsList = np.load('./SentimentClassification/wordsList.npy')
     print('Loaded the word list!')
     wordsList = wordsList.tolist() #  Originally loaded as numpy array
     wordsList = [word for word in wordsList] #  Encode words as UTF-8
@@ -56,7 +57,34 @@ def data(domains):
     x = np.array(xs)
     print(len(x))
     print(len(wordsList))
+    # save as pickle
+
+    f = open("./SentimentClassification/" + domain + ".pickle", 'wb')   # 'wb' instead 'w' for binary file
+    pickle.dump([x, y, len(wordsList)], f, -1)       # -1 specifies highest binary protocol
+    f.close()   
     return x, y, len(wordsList)
+
+
+def data(domains):
+    xs = []
+    ys = []
+    size = 0
+    base = "./SentimentClassification/"
+    for domain in domains:
+        filename = base + domain + ".pickle"
+        if os.path.isfile(filename):
+            f = open(filename, 'rb')   # 'rb' for reading binary file
+            myarr = pickle.load(f)     
+            f.close()
+            xs.append(myarr[0])
+            ys.append(myarr[1])
+            size = myarr[2]
+        else:
+            x, y, size = createGloveEmbeddings(domain)
+            xs.append(x)
+            ys.append(y)
+    return xs, ys, size
+
 
 class DannModel(object):
     """Simple MNIST domain adaptation model."""
