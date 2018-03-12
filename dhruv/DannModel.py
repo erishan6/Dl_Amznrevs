@@ -66,8 +66,8 @@ def createGloveEmbeddings(domain):
 
 
 def data(domains):
-    xs = []
-    ys = []
+    xs = None
+    ys = None
     size = 0
     base = "./SentimentClassification/"
     for domain in domains:
@@ -76,13 +76,26 @@ def data(domains):
             f = open(filename, 'rb')   # 'rb' for reading binary file
             myarr = pickle.load(f)     
             f.close()
-            xs.append(myarr[0])
-            ys.append(myarr[1])
+            if xs:
+                xs.append(myarr[0])
+            else:
+                xs = myarr[0]
+            if ys:
+                ys.append(myarr[1])
+            else:
+                ys = myarr[1]
+            print(ys)
             size = myarr[2]
         else:
             x, y, size = createGloveEmbeddings(domain)
-            xs.append(x)
-            ys.append(y)
+            if xs:
+                xs.append(x)
+            else:
+                xs = x
+            if ys:
+                ys.append(y)
+            else:
+                ys = y
     return xs, ys, size
 
 
