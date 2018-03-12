@@ -25,9 +25,38 @@ log_frequency = 10
 def data(domains):
     x_text, y = loadDataForCNN(domains, "train")
     # max_document_length = max([len(x.split(" ")) for x in x_text])
-    vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
-    x = np.array(list(vocab_processor.fit_transform(x_text)))
-    return x, y, len(vocab_processor.vocabulary_)
+    # max_document_length = 200
+    # vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
+    # x = np.array(list(vocab_processor.fit_transform(x_text)))
+    # return x, y, len(vocab_processor.vocabulary_)
+    wordsList = np.load('../SentimentClassification/glove/wordsList.npy')
+    print('Loaded the word list!')
+    wordsList = wordsList.tolist() #  Originally loaded as numpy array
+    wordsList = [word for word in wordsList] #  Encode words as UTF-8
+    xs = []
+    sentence_processed = 0
+    for sentence in x_text:
+        i=0
+        firstSentence = np.zeros((sequence_length), dtype='int32')
+        firstSentence[0] = wordsList.index("i")
+        for word in sentence:
+                if (i==len(sentence)-1 or i==200):
+                    break;
+                try:
+                    firstSentence[i] = wordsList.index(word)
+                except ValueError as e:
+                    pass
+                finally:
+                    pass
+                i=i+1
+        xs.append(firstSentence)
+        # if (sentence_processed%100==0):
+            # print(sentence_processed)
+        sentence_processed = sentence_processed+1
+    x = np.array(xs)
+    print(len(x))
+    print(len(wordsList))
+    return x, y, len(wordsList)
 
 class DannModel(object):
     """Simple MNIST domain adaptation model."""
@@ -235,7 +264,7 @@ def training(d1, d2, d3):
     graph = tf.get_default_graph()
     xs, ys, vs1 = data([d1])
     xt,yt,vs2 = data([d2])
-    x2,y2,vs2 = data([d3])
+    x2,y2,vs3 = data([d3])
     print(ys[0])
     with graph.as_default():
         model = DannModel(max(vs1,vs2))
