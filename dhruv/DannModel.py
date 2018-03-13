@@ -14,13 +14,14 @@ from read import loadDataForDannGLOVE
 import time
 import os
 import pickle
+import itertools
 
 batch_size = 64
 max_document_length = 200
 sequence_length = 200
-default_num_steps = 5
+default_num_steps = 1001
 embedding_size = 128
-log_frequency = 10
+log_frequency = 50
 
 
 def createGloveEmbeddings(domain):
@@ -331,4 +332,6 @@ def training(d1, d2, d3, TAG):
     # print('Test domain accuracy:', test_domain_acc)
 
 if __name__ == '__main__':
-    training("music", "books", "dvd", "hello")
+    for config in itertools.combinations_with_replacement(["music", "books", "dvd"], 2):
+        tag = config(0) + "-" + config(1)
+        training("music", "books", "dvd", tag)
