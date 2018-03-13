@@ -1,6 +1,6 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+# from __future__ import absolute_import
+# from __future__ import division
+# from __future__ import print_function
 
 import tensorflow as tf
 from tensorflow.contrib import learn
@@ -15,6 +15,9 @@ import time
 import os
 import pickle
 import itertools
+
+import logging
+logging.basicConfig(filename='example.log',level=logging.DEBUG)
 
 batch_size = 64
 max_document_length = 200
@@ -207,7 +210,7 @@ def training(d1, d2, d3, TAG):
             # Output directory for models and summaries
             timestamp = str(int(time.time()))
             out_dir = os.path.abspath(os.path.join(os.path.curdir, "runs", TAG + "-" + timestamp))
-            print("Writing to {}\n".format(out_dir))
+            logging.info("Writing to {}\n".format(out_dir))
 
             # Summaries for loss and accuracy
             # pred_loss_summary = tf.summary.scalar("pred_loss", model.pred_loss)
@@ -266,10 +269,10 @@ def training(d1, d2, d3, TAG):
                     train_summary_writer.add_summary(summaries, i)
 
                     if verbose and i % log_frequency == 0:
-                        print('loss: {}  d_acc: {}  p_acc: {}  p: {}  l: {}  lr: {}'.format(
+                        logging.info('loss: {}  d_acc: {}  p_acc: {}  p: {}  l: {}  lr: {}'.format(
                                 batch_loss, d_acc, p_acc, p, l, lr))
                         path = saver.save(sess, checkpoint_prefix, global_step=i)
-                        print("Saved model checkpoint to {}\n".format(path))
+                        logging.info("Saved model checkpoint to {}\n".format(path))
 
                 elif training_mode == 'source':
                     X, y = next(gen_source_only_batch)
@@ -305,7 +308,7 @@ def training(d1, d2, d3, TAG):
     xs, ys, vs1 = data([d1])
     xt,yt,vs2 = data([d2])
     xtest,ytest,vs3 = data([d3])
-    print(ys[0])
+
     with graph.as_default():
         model = DannModel(max(vs1,vs2))
 
@@ -334,4 +337,6 @@ def training(d1, d2, d3, TAG):
 if __name__ == '__main__':
     for config in itertools.combinations_with_replacement(["music", "books", "dvd"], 2):
         tag = config[0] + "-" + config[0]
+        logging.info("#################### training for " + tag + "####################")
         training("music", "books", "dvd", tag)
+        logging.info("#################### ending for " + tag + "####################")
