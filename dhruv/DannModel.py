@@ -18,7 +18,7 @@ import pickle
 batch_size = 64
 max_document_length = 200
 sequence_length = 200
-default_num_steps = 30
+default_num_steps = 5
 embedding_size = 128
 log_frequency = 10
 
@@ -84,7 +84,6 @@ def data(domains):
                 ys.append(myarr[1])
             else:
                 ys = myarr[1]
-            print(ys)
             size = myarr[2]
         else:
             x, y, size = createGloveEmbeddings(domain)
@@ -199,14 +198,14 @@ class DannModel(object):
             self.domain_pred = tf.nn.softmax(d_logits)
             self.domain_loss = tf.nn.softmax_cross_entropy_with_logits(logits=d_logits, labels=self.domain)
 
-def training(d1, d2, d3):
-    def train_and_evaluate(training_mode, graph, model, xs, ys, xt,yt, x2,y2,num_steps=default_num_steps, verbose=True):
+def training(d1, d2, d3, TAG):
+    def train_and_evaluate(training_mode, graph, model, xs, ys, xt,yt, xtest,ytest, TAG, num_steps=default_num_steps, verbose=True):
         """Helper to run the model with different training modes."""
 
         with tf.Session(graph=graph) as sess:
             # Output directory for models and summaries
             timestamp = str(int(time.time()))
-            out_dir = os.path.abspath(os.path.join(os.path.curdir, "runs", timestamp))
+            out_dir = os.path.abspath(os.path.join(os.path.curdir, "runs", TAG + "-" + timestamp))
             print("Writing to {}\n".format(out_dir))
 
             # Summaries for loss and accuracy
@@ -282,30 +281,29 @@ def training(d1, d2, d3):
                     _, batch_loss = sess.run([regular_train_op, pred_loss],
                                          feed_dict={model.X: X, model.y: y, model.train: False,
                                                     model.l: l, learning_rate: lr})
-            gen_source_only_batch = batch_generator([x2, y2], batch_size)
-            X0, y0 = next(gen_source_only_batch)
-            X = np.vstack([X0])
-            y = np.vstack([y0])
-            # Compute final evaluation on test data
-            source_acc = sess.run(label_acc,
-                                feed_dict={model.X: X, model.y: y, model.domain: domain_labels,
-                                           model.train: False})
+            
+        #     gen_test_batch = batch_generator([xtest, ytest], batch_size)
+        #     X0, y0 = next(gen_test_batch)
+        #     X = np.vstack([X0])
+        #     y = np.vstack([y0])
+        #     # Compute final evaluation on test data
+        #     source_acc = sess.run(label_acc,
+        #                         feed_dict={model.X: X, model.y: y, model.domain: domain_labels, model.train: False})
 
-            target_acc = sess.run(label_acc,
-                                feed_dict={model.X: X, model.y: y, model.domain: domain_labels,
-                                           model.train: False})
+        #     target_acc = sess.run(label_acc,
+        #                         feed_dict={model.X: X, model.y: y, model.domain: domain_labels, model.train: False})
 
-            test_domain_acc = sess.run(domain_acc,
-                                feed_dict={model.X: X, model.y: y, model.domain: domain_labels, model.l: 1.0})
+        #     test_domain_acc = sess.run(domain_acc,
+        #                         feed_dict={model.X: X, model.y: y, model.domain: domain_labels, model.l: 1.0, model.train: False})
 
-            test_emb = sess.run(model.feature, feed_dict={model.X: X})
-        return source_acc, target_acc, test_domain_acc, test_emb
+        #     test_emb = sess.run(model.feature, feed_dict={model.X: X, model.train: False})
+        # return source_acc, target_acc, test_domain_acc, test_emb
 
     # Build the model graph
     graph = tf.get_default_graph()
     xs, ys, vs1 = data([d1])
     xt,yt,vs2 = data([d2])
-    x2,y2,vs3 = data([d3])
+    xtest,ytest,vs3 = data([d3])
     print(ys[0])
     with graph.as_default():
         model = DannModel(max(vs1,vs2))
@@ -326,10 +324,11 @@ def training(d1, d2, d3):
         domain_acc = tf.reduce_mean(tf.cast(correct_domain_pred, tf.float32))
 
     print('\nDomain adaptation training')
-    source_acc, target_acc, d_acc, dann_emb = train_and_evaluate('dann', graph, model, xs, ys,xt,yt,x2,y2)
-    print('Source (MNIST) accuracy:', source_acc)
-    print('Target (MNIST-M) accuracy:', target_acc)
-    print('Domain accuracy:', d_acc)
+    # source_acc, target_acc, test_domain_acc, dann_emb =
+    train_and_evaluate('dann', graph, model, xs, ys,xt,yt,xtest,ytest, TAG)
+    # print('Source accuracy:', source_acc)
+    # print('Target accuracy:', target_acc)
+    # print('Test domain accuracy:', test_domain_acc)
 
 if __name__ == '__main__':
-    training("music", "books", "dvd")
+    training("music", "books", "dvd", "hello")
