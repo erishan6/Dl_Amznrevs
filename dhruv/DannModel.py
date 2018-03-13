@@ -333,5 +333,5 @@ def training(d1, d2, d3, TAG):
 
 if __name__ == '__main__':
     for config in itertools.combinations_with_replacement(["music", "books", "dvd"], 2):
-        tag = config(0) + "-" + config(1)
+        tag = config[0] + "-" + config[0]
         training("music", "books", "dvd", tag)
