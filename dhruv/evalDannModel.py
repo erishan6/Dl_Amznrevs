@@ -37,7 +37,7 @@ def evalDann():
         print("{}={}".format(attr.upper(), value))
     print("")
 
-    x_test, y_test, v_test = data(["dvd"], "test", ".test.pickle")
+    x_test, y_test, v_test = data(["books"], "test", ".test.pickle")
 
     print("\nEvaluating...\n")
     # Evaluation
@@ -68,35 +68,35 @@ def evalDann():
 
             X = graph.get_operation_by_name("X").outputs[0]
             y = graph.get_operation_by_name("y").outputs[0]
-            print(X)
-            print(y)
-            # input_y = graph.get_operation_by_name("input_y").outputs[0]
-
-            # Tensors we want to evaluate
-            # predictions = graph.get_operation_by_name("label_acc").outputs[0]
+            # domain = graph.get_operation_by_name("domain").outputs[0]
+            train = graph.get_operation_by_name("train").outputs[0]
+            predictions = graph.get_operation_by_name("label_predictor/prediction").outputs[0]
+            print(predictions)
 
             # Generate batches for one epoch
-            batches = read.batch_iter(list(x_test), FLAGS.batch_size, 1, shuffle=False)
-
+            batches_x = read.batch_iter(list(x_test), FLAGS.batch_size, 1, shuffle=False)
+            batches_y = read.batch_iter(list(y_test), FLAGS.batch_size, 1, shuffle=False)
             # Collect the predictions here
             all_predictions = []
-
-            for x_test_batch in batches:
-                batch_predictions = sess.run({X: x_test_batch,y:1})
+            for x_test_batch, y_test_batch in zip(batches_x,batches_y):
+                # test_x = np.vstack([x_test_batch])
+                # test_y = np.vstack([y_test_batch])
+                # batch_predictions = sess.run(predictions,{X: test_x,y :test_y,train :False})
+                batch_predictions = sess.run(predictions,{X: x_test_batch,y :y_test_batch,train:False})
                 print(batch_predictions)
-                all_predictions = np.concatenate([all_predictions, batch_predictions])
+                # all_predictions = np.concatenate((all_predictions, batch_predictions),axis=0)
 
     # Print accuracy if y_test is defined
-    if y_test is not None:
-        correct_predictions = float(sum(all_predictions == y_test))
-        print("Total number of test examples: {}".format(len(y_test)))
-        print("Accuracy: {:g}".format(correct_predictions/float(len(y_test))))
+    # if y_test is not None:
+    #     correct_predictions = float(sum(all_predictions == y_test))
+    #     print("Total number of test examples: {}".format(len(y_test)))
+    #     print("Accuracy: {:g}".format(correct_predictions/float(len(y_test))))
 
-    # Save the evaluation to a csv
-    predictions_human_readable = np.column_stack((np.array(x_raw), all_predictions))
-    out_path = os.path.join(FLAGS.checkpoint_dir, "..", "prediction.csv")
-    print("Saving evaluation to {0}".format(out_path))
-    with open(out_path, 'w') as f:
-        csv.writer(f).writerows(predictions_human_readable)
+    # # Save the evaluation to a csv
+    # predictions_human_readable = np.column_stack((np.array(x_raw), all_predictions))
+    # out_path = os.path.join(FLAGS.checkpoint_dir, "..", "prediction.csv")
+    # print("Saving evaluation to {0}".format(out_path))
+    # with open(out_path, 'w') as f:
+    #     csv.writer(f).writerows(predictions_human_readable)
 
 evalDann()

@@ -88,7 +88,7 @@ class DannModel(object):
             self.feature = tf.reshape(h_pool1, [-1, 40 * 40 * 48])
 
         # MLP for class prediction
-        with tf.variable_scope('label_predictor'):
+        with tf.name_scope('label_predictor'):
 
             # Switches to route target examples (second half of batch) differently
             # depending on train or test mode.
@@ -112,7 +112,7 @@ class DannModel(object):
             b_fc2 = bias_variable([2])
             logits = tf.matmul(h_fc1, W_fc2) + b_fc2
 
-            self.pred = tf.nn.softmax(logits)
+            self.pred = tf.nn.softmax(logits, name="prediction")
             self.pred_loss = tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=self.classify_labels)
 
         # Small MLP for domain prediction with adversarial loss
