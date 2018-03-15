@@ -25,6 +25,7 @@ sequence_length = 200
 default_num_steps = 1001
 embedding_size = 128
 log_frequency = 50
+max_models_to_keep = 2
 
 
 def createGloveEmbeddings(domain):
@@ -65,7 +66,7 @@ def createGloveEmbeddings(domain):
 
     f = open("./SentimentClassification/" + domain + ".pickle", 'wb')   # 'wb' instead 'w' for binary file
     pickle.dump([x, y, len(wordsList)], f, -1)       # -1 specifies highest binary protocol
-    f.close()   
+    f.close()
     return x, y, len(wordsList)
 
 
@@ -78,7 +79,7 @@ def data(domains):
         filename = base + domain + ".pickle"
         if os.path.isfile(filename):
             f = open(filename, 'rb')   # 'rb' for reading binary file
-            myarr = pickle.load(f)     
+            myarr = pickle.load(f)
             f.close()
             if xs:
                 xs.append(myarr[0])
@@ -234,7 +235,7 @@ def training(d1, d2, d3, TAG):
             checkpoint_prefix = os.path.join(checkpoint_dir, "model")
             if not os.path.exists(checkpoint_dir):
                 os.makedirs(checkpoint_dir)
-            saver = tf.train.Saver(tf.global_variables(), max_to_keep=5)
+            saver = tf.train.Saver(tf.global_variables(), max_to_keep=max_models_to_keep)
             tf.global_variables_initializer().run()
 
             # Batch generators
@@ -285,7 +286,7 @@ def training(d1, d2, d3, TAG):
                     _, batch_loss = sess.run([regular_train_op, pred_loss],
                                          feed_dict={model.X: X, model.y: y, model.train: False,
                                                     model.l: l, learning_rate: lr})
-            
+
         #     gen_test_batch = batch_generator([xtest, ytest], batch_size)
         #     X0, y0 = next(gen_test_batch)
         #     X = np.vstack([X0])
