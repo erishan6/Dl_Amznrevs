@@ -10,6 +10,10 @@ from read import loadDataForDannGLOVE
 import os
 import pickle
 
+# config settings,make sure that they are same as in DannModel
+# TODO: Need to move this into a common file later
+sequence_length = 200
+
 # static strings
 BASE_DATA_DIR = "./SentimentClassification/"
 
