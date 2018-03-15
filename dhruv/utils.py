@@ -90,3 +90,45 @@ def plot_embedding(X, y, d, title=None):
     plt.xticks([]), plt.yticks([])
     if title is not None:
         plt.title(title)
+
+
+def createGloveEmbeddings(domain, dataset):
+    x_text, y = loadDataForDannGLOVE(domain, dataset)
+    # max_document_length = max([len(x.split(" ")) for x in x_text])
+    # max_document_length = 200
+    # vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
+    # x = np.array(list(vocab_processor.fit_transform(x_text)))
+    # return x, y, len(vocab_processor.vocabulary_)
+    wordsList = np.load(BASE_DATA_DIR + 'wordsList.npy')
+    print('Loaded the word list!')
+    wordsList = wordsList.tolist() #  Originally loaded as numpy array
+    wordsList = [word for word in wordsList] #  Encode words as UTF-8
+    xs = []
+    sentence_processed = 0
+    for sentence in x_text:
+        i=0
+        firstSentence = np.zeros((sequence_length), dtype='int32')
+        firstSentence[0] = wordsList.index("i")
+        for word in sentence:
+                if (i==len(sentence)-1 or i==200):
+                    break;
+                try:
+                    firstSentence[i] = wordsList.index(word)
+                except ValueError as e:
+                    pass
+                finally:
+                    pass
+                i=i+1
+        xs.append(firstSentence)
+        # if (sentence_processed%100==0):
+            # print(sentence_processed)
+        sentence_processed = sentence_processed+1
+    x = np.array(xs)
+    print(len(x))
+    print(len(wordsList))
+    # save as pickle
+
+    f = open(BASE_DATA_DIR + domain + train_pickle_file_suffix, 'wb')   # 'wb' instead 'w' for binary file
+    pickle.dump([x, y, len(wordsList)], f, -1)       # -1 specifies highest binary protocol
+    f.close()
+    return x, y, len(wordsList)

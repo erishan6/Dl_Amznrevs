@@ -23,61 +23,23 @@ logging.basicConfig(filename='example.log',level=logging.DEBUG)
 batch_size = 64
 max_document_length = 200
 sequence_length = 200
-default_num_steps = 11
+default_num_steps = 5
 embedding_size = 128
 log_frequency = 2
 max_models_to_keep = 2
 
-
-def createGloveEmbeddings(domain):
-    x_text, y = loadDataForDannGLOVE(domain, "train")
-    # max_document_length = max([len(x.split(" ")) for x in x_text])
-    # max_document_length = 200
-    # vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
-    # x = np.array(list(vocab_processor.fit_transform(x_text)))
-    # return x, y, len(vocab_processor.vocabulary_)
-    wordsList = np.load('./SentimentClassification/wordsList.npy')
-    print('Loaded the word list!')
-    wordsList = wordsList.tolist() #  Originally loaded as numpy array
-    wordsList = [word for word in wordsList] #  Encode words as UTF-8
-    xs = []
-    sentence_processed = 0
-    for sentence in x_text:
-        i=0
-        firstSentence = np.zeros((sequence_length), dtype='int32')
-        firstSentence[0] = wordsList.index("i")
-        for word in sentence:
-                if (i==len(sentence)-1 or i==200):
-                    break;
-                try:
-                    firstSentence[i] = wordsList.index(word)
-                except ValueError as e:
-                    pass
-                finally:
-                    pass
-                i=i+1
-        xs.append(firstSentence)
-        # if (sentence_processed%100==0):
-            # print(sentence_processed)
-        sentence_processed = sentence_processed+1
-    x = np.array(xs)
-    print(len(x))
-    print(len(wordsList))
-    # save as pickle
-
-    f = open("./SentimentClassification/" + domain + ".pickle", 'wb')   # 'wb' instead 'w' for binary file
-    pickle.dump([x, y, len(wordsList)], f, -1)       # -1 specifies highest binary protocol
-    f.close()
-    return x, y, len(wordsList)
+# static strings
+train_pickle_file_suffix = ".train.pickle"
+BASE_DATA_DIR = "./SentimentClassification/"
 
 
 def data(domains):
     xs = None
     ys = None
     size = 0
-    base = "./SentimentClassification/"
+    base = BASE_DATA_DIR
     for domain in domains:
-        filename = base + domain + ".pickle"
+        filename = base + domain + train_pickle_file_suffix
         if os.path.isfile(filename):
             f = open(filename, 'rb')   # 'rb' for reading binary file
             myarr = pickle.load(f)
@@ -92,7 +54,7 @@ def data(domains):
                 ys = myarr[1]
             size = myarr[2]
         else:
-            x, y, size = createGloveEmbeddings(domain)
+            x, y, size = createGloveEmbeddings(domain, "train")
             if xs:
                 xs.append(x)
             else:
