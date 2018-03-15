@@ -19,7 +19,7 @@ tf.flags.DEFINE_string("negative_data_file", "./data/rt-polaritydata/rt-polarity
 
 # Eval Parameters
 tf.flags.DEFINE_integer("batch_size", 64, "Batch Size (default: 64)")
-tf.flags.DEFINE_string("checkpoint_dir", "/Users/erishan6/Study WS17/CL-Deep Learning/Ishan_Repo/Dl_Amznrevs/dhruv/runs/music-music-1521116009/checkpoints/model-50", "Checkpoint directory from training run")
+tf.flags.DEFINE_string("checkpoint_dir", "", "Checkpoint directory from training run")
 tf.flags.DEFINE_boolean("eval_train", False, "Evaluate on all training data")
 
 # Misc Parameters
@@ -143,12 +143,22 @@ def evalDann():
             saver.restore(sess, checkpoint_file)
 
             # Get the placeholders from the graph by name
-            input_x = graph.get_operation_by_name("input_x").outputs[0]
+            # Compute final evaluation on test data
+            # self.X = tf.placeholder(tf.int32, [None, sequence_length], name="X")
+            # self.y = tf.placeholder(tf.float32, [None, 2], name="y")
+            # self.domain = tf.placeholder(tf.float32, [None, 2], name="domain")
+            # self.l = tf.placeholder(tf.float32, [], name="l")
+            # self.train = tf.placeholder(tf.bool, [], name="train")
+            # source_acc = sess.run(label_acc, feed_dict={model.X: X, model.y: y, model.domain: domain_labels, model.train: False})
+
+            X = graph.get_operation_by_name("X").outputs[0]
+            y = graph.get_operation_by_name("y").outputs[0]
+            print(X)
+            print(y)
             # input_y = graph.get_operation_by_name("input_y").outputs[0]
-            dropout_keep_prob = graph.get_operation_by_name("dropout_keep_prob").outputs[0]
 
             # Tensors we want to evaluate
-            predictions = graph.get_operation_by_name("output/predictions").outputs[0]
+            # predictions = graph.get_operation_by_name("label_acc").outputs[0]
 
             # Generate batches for one epoch
             batches = read.batch_iter(list(x_test), FLAGS.batch_size, 1, shuffle=False)
@@ -157,7 +167,8 @@ def evalDann():
             all_predictions = []
 
             for x_test_batch in batches:
-                batch_predictions = sess.run(predictions, {input_x: x_test_batch, dropout_keep_prob: 1.0})
+                batch_predictions = sess.run({X: x_test_batch,y:1})
+                print(batch_predictions)
                 all_predictions = np.concatenate([all_predictions, batch_predictions])
 
     # Print accuracy if y_test is defined
