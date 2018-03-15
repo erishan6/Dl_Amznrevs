@@ -337,7 +337,7 @@ def training(d1, d2, d3, TAG):
     # print('Test domain accuracy:', test_domain_acc)
 
 if __name__ == '__main__':
-        tag = sys.argv[0] + "-" + sys.argv[1]
+        tag = sys.argv[1] + "-" + sys.argv[2]
         logging.info("#################### training for " + tag + "####################")
-        training(sys.argv[0], sys.argv[1], sys.argv[2], tag)
+        training(sys.argv[2], sys.argv[2], sys.argv[3], tag)
         logging.info("#################### ending for " + tag + "####################")
