@@ -171,3 +171,7 @@ def data(domains, dataset, file_suffix):
             else:
                 ys = y
     return xs, ys, size
+
+
+if __name__ == '__main__':
+    data(["music", "books", "dvd"], "test", ".test.pickle")
