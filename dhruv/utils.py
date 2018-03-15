@@ -6,6 +6,12 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import ImageGrid
+from read import loadDataForDannGLOVE
+import os
+import pickle
+
+# static strings
+BASE_DATA_DIR = "./SentimentClassification/"
 
 # Model construction utilities below adapted from
 # https://www.tensorflow.org/versions/r0.8/tutorials/mnist/pros/index.html#deep-mnist-for-experts
@@ -92,7 +98,7 @@ def plot_embedding(X, y, d, title=None):
         plt.title(title)
 
 
-def createGloveEmbeddings(domain, dataset):
+def createGloveEmbeddings(domain, dataset, file_suffix):
     x_text, y = loadDataForDannGLOVE(domain, dataset)
     # max_document_length = max([len(x.split(" ")) for x in x_text])
     # max_document_length = 200
@@ -128,7 +134,40 @@ def createGloveEmbeddings(domain, dataset):
     print(len(wordsList))
     # save as pickle
 
-    f = open(BASE_DATA_DIR + domain + train_pickle_file_suffix, 'wb')   # 'wb' instead 'w' for binary file
+    f = open(BASE_DATA_DIR + domain + file_suffix, 'wb')   # 'wb' instead 'w' for binary file
     pickle.dump([x, y, len(wordsList)], f, -1)       # -1 specifies highest binary protocol
     f.close()
     return x, y, len(wordsList)
+
+
+def data(domains, dataset, file_suffix):
+    xs = None
+    ys = None
+    size = 0
+    base = BASE_DATA_DIR
+    for domain in domains:
+        filename = base + domain + file_suffix
+        if os.path.isfile(filename):
+            f = open(filename, 'rb')   # 'rb' for reading binary file
+            myarr = pickle.load(f)
+            f.close()
+            if xs:
+                xs.append(myarr[0])
+            else:
+                xs = myarr[0]
+            if ys:
+                ys.append(myarr[1])
+            else:
+                ys = myarr[1]
+            size = myarr[2]
+        else:
+            x, y, size = createGloveEmbeddings(domain, dataset, file_suffix)
+            if xs:
+                xs.append(x)
+            else:
+                xs = x
+            if ys:
+                ys.append(y)
+            else:
+                ys = y
+    return xs, ys, size

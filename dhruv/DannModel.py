@@ -10,7 +10,6 @@ import pickle as pkl
 
 from flip_gradient import flip_gradient
 from utils import *
-from read import loadDataForDannGLOVE
 import time
 import os
 import pickle
@@ -31,39 +30,6 @@ max_models_to_keep = 2
 # static strings
 train_pickle_file_suffix = ".train.pickle"
 BASE_DATA_DIR = "./SentimentClassification/"
-
-
-def data(domains):
-    xs = None
-    ys = None
-    size = 0
-    base = BASE_DATA_DIR
-    for domain in domains:
-        filename = base + domain + train_pickle_file_suffix
-        if os.path.isfile(filename):
-            f = open(filename, 'rb')   # 'rb' for reading binary file
-            myarr = pickle.load(f)
-            f.close()
-            if xs:
-                xs.append(myarr[0])
-            else:
-                xs = myarr[0]
-            if ys:
-                ys.append(myarr[1])
-            else:
-                ys = myarr[1]
-            size = myarr[2]
-        else:
-            x, y, size = createGloveEmbeddings(domain, "train")
-            if xs:
-                xs.append(x)
-            else:
-                xs = x
-            if ys:
-                ys.append(y)
-            else:
-                ys = y
-    return xs, ys, size
 
 
 class DannModel(object):
@@ -269,9 +235,9 @@ def training(d1, d2, d3, TAG):
 
     # Build the model graph
     graph = tf.get_default_graph()
-    xs, ys, vs1 = data([d1])
-    xt,yt,vs2 = data([d2])
-    xtest,ytest,vs3 = data([d3])
+    xs, ys, vs1 = data([d1], "train", train_pickle_file_suffix)
+    xt,yt,vs2 = data([d2], "train", train_pickle_file_suffix)
+    xtest,ytest,vs3 = data([d3], "train", train_pickle_file_suffix)
 
     with graph.as_default():
         model = DannModel(max(vs1,vs2))
