@@ -15,6 +15,7 @@ import time
 import os
 import pickle
 import itertools
+import sys
 
 import logging
 logging.basicConfig(filename='example.log',level=logging.DEBUG)
@@ -336,8 +337,7 @@ def training(d1, d2, d3, TAG):
     # print('Test domain accuracy:', test_domain_acc)
 
 if __name__ == '__main__':
-    for config in itertools.combinations_with_replacement(["music", "books", "dvd"], 2):
-        tag = config[0] + "-" + config[0]
+        tag = sys.argv[0] + "-" + sys.argv[1]
         logging.info("#################### training for " + tag + "####################")
-        training("music", "books", "dvd", tag)
+        training(sys.argv[0], sys.argv[1], sys.argv[2], tag)
         logging.info("#################### ending for " + tag + "####################")
