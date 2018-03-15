@@ -10,12 +10,11 @@ from read import loadDataForDannGLOVE
 from tensorflow.contrib import learn
 import csv
 import pickle
+from utils import data
 # Parameters
 # ==================================================
 
 # Data Parameters
-tf.flags.DEFINE_string("positive_data_file", "./data/rt-polaritydata/rt-polarity.pos", "Data source for the positive data.")
-tf.flags.DEFINE_string("negative_data_file", "./data/rt-polaritydata/rt-polarity.neg", "Data source for the negative data.")
 
 # Eval Parameters
 tf.flags.DEFINE_integer("batch_size", 64, "Batch Size (default: 64)")
@@ -30,79 +29,6 @@ sequence_length = 200
 FLAGS = tf.flags.FLAGS
 # FLAGS._parse_flags()
 
-def createGloveEmbeddingsForTesting(domain):
-    x_text, y = loadDataForDannGLOVE(domain, "train")
-    # max_document_length = max([len(x.split(" ")) for x in x_text])
-    # max_document_length = 200
-    # vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
-    # x = np.array(list(vocab_processor.fit_transform(x_text)))
-    # return x, y, len(vocab_processor.vocabulary_)
-    wordsList = np.load('./SentimentClassification/wordsList.npy')
-    print('Loaded the word list!')
-    wordsList = wordsList.tolist() #  Originally loaded as numpy array
-    wordsList = [word for word in wordsList] #  Encode words as UTF-8
-    xs = []
-    sentence_processed = 0
-    for sentence in x_text:
-        i=0
-        firstSentence = np.zeros((sequence_length), dtype='int32')
-        firstSentence[0] = wordsList.index("i")
-        for word in sentence:
-                if (i==len(sentence)-1 or i==200):
-                    break;
-                try:
-                    firstSentence[i] = wordsList.index(word)
-                except ValueError as e:
-                    pass
-                finally:
-                    pass
-                i=i+1
-        xs.append(firstSentence)
-        # if (sentence_processed%100==0):
-            # print(sentence_processed)
-        sentence_processed = sentence_processed+1
-    x = np.array(xs)
-    print(len(x))
-    print(len(wordsList))
-    # save as pickle
-
-    f = open("./SentimentClassification/" + domain + ".pickle", 'wb')   # 'wb' instead 'w' for binary file
-    pickle.dump([x, y, len(wordsList)], f, -1)       # -1 specifies highest binary protocol
-    f.close()
-    return x, y, len(wordsList)
-
-
-def data(domains):
-    xs = None
-    ys = None
-    size = 0
-    base = "./SentimentClassification/"
-    for domain in domains:
-        filename = base + domain + ".pickle"
-        if os.path.isfile(filename):
-            f = open(filename, 'rb')   # 'rb' for reading binary file
-            myarr = pickle.load(f)
-            f.close()
-            if xs:
-                xs.append(myarr[0])
-            else:
-                xs = myarr[0]
-            if ys:
-                ys.append(myarr[1])
-            else:
-                ys = myarr[1]
-            size = myarr[2]
-        else:
-            x, y, size = createGloveEmbeddingsForTesting(domain)
-            if xs:
-                xs.append(x)
-            else:
-                xs = x
-            if ys:
-                ys.append(y)
-            else:
-                ys = y
-    return xs, ys, size
 
 def evalDann():
 
@@ -111,19 +37,8 @@ def evalDann():
         print("{}={}".format(attr.upper(), value))
     print("")
 
-    # CHANGE THIS: Load data. Load your own data here
-    if FLAGS.eval_train:
-        x_raw, y_test = read.loadDataForCNN(["dvd"],"test")
-        y_test = np.argmax(y_test, axis=1)
-    else:
-        x_raw = ["a masterpiece four years in the making", "everything is off."]
-        y_test = [1, 0]
+    x_test, y_test, v_test = data(["dvd"], "test", ".test.pickle")
 
-    # Map data into vocabulary
-    # vocab_path = os.path.join(FLAGS.checkpoint_dir, "..", "vocab")
-    # vocab_processor = learn.preprocessing.VocabularyProcessor.restore(vocab_path)
-    # x_test = np.array(list(vocab_processor.transform(x_raw)))
-    x_test, y_test, v_test = data(["dvd"])
     print("\nEvaluating...\n")
     # Evaluation
     # ==================================================
