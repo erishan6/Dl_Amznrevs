@@ -23,9 +23,9 @@ logging.basicConfig(filename='example.log',level=logging.DEBUG)
 batch_size = 64
 max_document_length = 200
 sequence_length = 200
-default_num_steps = 1001
+default_num_steps = 11
 embedding_size = 128
-log_frequency = 50
+log_frequency = 2
 max_models_to_keep = 2
 
 
