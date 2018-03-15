@@ -17,7 +17,7 @@ import itertools
 import sys
 
 import logging
-logging.basicConfig(filename='log.txt',level=logging.DEBUG)
+logging.basicConfig(filename='train.log',level=logging.DEBUG)
 
 batch_size = 64
 max_document_length = 200
