@@ -22,9 +22,9 @@ logging.basicConfig(filename='train.log',level=logging.DEBUG)
 batch_size = 64
 max_document_length = 200
 sequence_length = 200
-default_num_steps = 5
+default_num_steps = 201
 embedding_size = 128
-log_frequency = 2
+log_frequency = 50
 max_models_to_keep = 1
 
 # static strings
