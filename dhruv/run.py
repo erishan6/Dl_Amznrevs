@@ -47,7 +47,7 @@ print("")
 
 # Load data
 print("Loading data...")
-x_text, y = read.loadDataForCNN(["music"], "train")
+x_text, y = read.loadDataForCNN(["music", "books"], "train")
 y1 = [[1,0] for x in range(len(y)//2)]
 y2 = [[0,1] for x in range(len(y)//2)]
 y_domain = y1 + y2
