@@ -72,7 +72,7 @@ class DannModel(object):
         #
 
         # CNN model for feature extraction
-        with tf.variable_scope('feature_extractor'):
+        with tf.name_scope('feature_extractor'):
 
             W_conv0 = weight_variable([5, 5, 1, 32])
             b_conv0 = bias_variable([32])
@@ -116,7 +116,7 @@ class DannModel(object):
             self.pred_loss = tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=self.classify_labels)
 
         # Small MLP for domain prediction with adversarial loss
-        with tf.variable_scope('domain_predictor'):
+        with tf.name_scope('domain_predictor'):
 
             # Flip the gradient when backpropagating through this operation
             feat = flip_gradient(self.feature, self.l)
