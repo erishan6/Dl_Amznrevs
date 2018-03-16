@@ -25,7 +25,7 @@ sequence_length = 200
 default_num_steps = 5
 embedding_size = 128
 log_frequency = 2
-max_models_to_keep = 2
+max_models_to_keep = 1
 
 # static strings
 train_pickle_file_suffix = ".train.pickle"
