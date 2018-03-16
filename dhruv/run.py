@@ -6,7 +6,7 @@ import os
 import time
 import datetime
 import read
-from text_cnn import TextCNN
+from network import TextCNN
 from tensorflow.contrib import learn
 
 # Parameters
@@ -47,7 +47,7 @@ print("")
 
 # Load data
 print("Loading data...")
-x_text, y = read.loadDataForCNN("train")
+x_text, y = read.loadDataForCNN(["music"], "train")
 # print(y)
 y = np.array(y)
 # Build vocabulary
@@ -93,7 +93,7 @@ with tf.Graph().as_default():
         # Define Training procedure
         global_step = tf.Variable(0, name="global_step", trainable=False)
         optimizer = tf.train.AdamOptimizer(1e-3)
-        grads_and_vars = optimizer.compute_gradients(cnn.loss)
+        grads_and_vars = optimizer.compute_gradients(cnn.loss + cnn.loss_domain)
         train_op = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
 
         # Keep track of gradient values and sparsity (optional)
@@ -112,7 +112,7 @@ with tf.Graph().as_default():
         print("Writing to {}\n".format(out_dir))
 
         # Summaries for loss and accuracy
-        loss_summary = tf.summary.scalar("loss", cnn.loss)
+        loss_summary = tf.summary.scalar("loss", cnn.loss + cnn.loss_domain)
         acc_summary = tf.summary.scalar("accuracy", cnn.accuracy)
 
         # Train Summaries
@@ -142,7 +142,7 @@ with tf.Graph().as_default():
             """
             A single training step
             """
-            feed_dict = {cnn.input_x: x_batch, cnn.input_y: y_batch, cnn.dropout_keep_prob: FLAGS.dropout_keep_prob}
+            feed_dict = {cnn.input_x: x_batch, cnn.input_y: y_batch, cnn.input_y_domain: y_batch, cnn.dropout_keep_prob: FLAGS.dropout_keep_prob}
             _, step, summaries, loss, accuracy = sess.run(
                 [train_op, global_step, train_summary_op, cnn.loss, cnn.accuracy],
                 feed_dict)
@@ -154,7 +154,7 @@ with tf.Graph().as_default():
             """
             Evaluates model on a dev set
             """
-            feed_dict = {cnn.input_x: x_batch, cnn.input_y: y_batch, cnn.dropout_keep_prob: 1.0}
+            feed_dict = {cnn.input_x: x_batch, cnn.input_y: y_batch, cnn.input_y_domain: y_batch, cnn.dropout_keep_prob: 1.0}
             step, summaries, loss, accuracy = sess.run(
                 [global_step, dev_summary_op, cnn.loss, cnn.accuracy],
                 feed_dict)
