@@ -13,6 +13,7 @@ class TextCNN(object):
         # Placeholders for input, output and dropout
         self.input_x = tf.placeholder(tf.int32, [None, sequence_length], name="input_x")
         self.input_y = tf.placeholder(tf.float32, [None, num_classes], name="input_y")
+        self.input_y_domain = tf.placeholder(tf.float32, [None, num_classes], name="input_y_domain")
         self.dropout_keep_prob = tf.placeholder(tf.float32, name="dropout_keep_prob")
 
         # Keeping track of l2 regularization loss (optional)
@@ -81,3 +82,25 @@ class TextCNN(object):
         with tf.name_scope("accuracy"):
             correct_predictions = tf.equal(self.predictions, tf.argmax(self.input_y, 1))
             self.accuracy = tf.reduce_mean(tf.cast(correct_predictions, "float"), name="accuracy")
+
+        # Domain layers (unnormalized) scores and predictions
+        with tf.name_scope("domina_output"):
+            W_d = tf.get_variable(
+                "W",
+                shape=[num_filters_total, num_classes],
+                initializer=tf.contrib.layers.xavier_initializer())
+            b_d = tf.Variable(tf.constant(0.1, shape=[num_classes]), name="b")
+            l2_loss_domain += tf.nn.l2_loss(W_d)
+            l2_loss_domain += tf.nn.l2_loss(b_d)
+            self.scores_domain = tf.nn.xw_plus_b(flip_gradient(self.h_drop), W_d, b_d, name="domain_scores")
+            self.predictions_domain = tf.argmax(self.scores_domain, 1, name="domain_predictions")
+
+        # Calculate mean cross-entropy loss
+        with tf.name_scope("loss"):
+            losses_domain = tf.nn.softmax_cross_entropy_with_logits(logits=self.scores_domain, labels=self.input_y_domain)
+            self.loss_domain = tf.reduce_mean(losses_domain) + l2_reg_lambda * l2_loss_domain
+
+        # Accuracy
+        with tf.name_scope("accuracy"):
+            correct_predictions_domain = tf.equal(self.predictions_domain, tf.argmax(self.input_y_domain, 1))
+            self.accuracy_domain = tf.reduce_mean(tf.cast(correct_predictions_domain, "float"), name="domain_accuracy")
