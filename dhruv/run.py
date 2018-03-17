@@ -29,7 +29,10 @@ tf.flags.DEFINE_integer("batch_size", 64, "Batch Size (default: 64)")
 tf.flags.DEFINE_integer("num_epochs", 200, "Number of training epochs (default: 200)")
 tf.flags.DEFINE_integer("evaluate_every", 100, "Evaluate model on dev set after this many steps (default: 100)")
 tf.flags.DEFINE_integer("checkpoint_every", 100, "Save model after this many steps (default: 100)")
-tf.flags.DEFINE_integer("num_checkpoints", 5, "Number of checkpoints to store (default: 5)")
+tf.flags.DEFINE_integer("num_checkpoints", 1, "Number of checkpoints to store (default: 1)")
+tf.flags.DEFINE_string("source_data", "books", "Source data for training (default: books)")
+tf.flags.DEFINE_string("target_data", "music", "Target data for training (default: music)")
+
 # Misc Parameters
 tf.flags.DEFINE_boolean("allow_soft_placement", True, "Allow device soft device placement")
 tf.flags.DEFINE_boolean("log_device_placement", False, "Log placement of ops on devices")
@@ -47,7 +50,7 @@ print("")
 
 # Load data
 print("Loading data...")
-x_text, y = read.loadDataForCNN(["music", "books"], "train")
+x_text, y = read.loadDataForCNN([FLAGS.source_data,FLAGS.target_data], "train")
 y1 = [[1,0] for x in range(len(y)//2)]
 y2 = [[0,1] for x in range(len(y)//2)]
 y_domain = y1 + y2
@@ -99,9 +102,13 @@ with tf.Graph().as_default():
         # Define Training procedure
         global_step = tf.Variable(0, name="global_step", trainable=False)
         optimizer = tf.train.AdamOptimizer(1e-3)
-        grads_and_vars = optimizer.compute_gradients(cnn.loss + cnn.loss_domain)
-        train_op = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
-
+        #grads_and_vars = optimizer.compute_gradients(cnn.loss + cnn.loss_domain)
+        #train_op = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
+        grads_and_vars = optimizer.compute_gradients(cnn.loss)
+        train_op1 = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
+        grads_and_vars2=optimizer.compute_gradients(-1*cnn.loss_domain)
+        train_op2 = optimizer.apply_gradients(grads_and_vars2, global_step=global_step)
+        train_op = tf.group(train_op1, train_op2)
         # Keep track of gradient values and sparsity (optional)
         grad_summaries = []
         for g, v in grads_and_vars:

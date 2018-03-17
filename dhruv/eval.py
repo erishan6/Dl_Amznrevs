@@ -21,6 +21,8 @@ tf.flags.DEFINE_string("negative_data_file", "./data/rt-polaritydata/rt-polarity
 tf.flags.DEFINE_integer("batch_size", 64, "Batch Size (default: 64)")
 tf.flags.DEFINE_string("checkpoint_dir", "", "Checkpoint directory from training run")
 tf.flags.DEFINE_boolean("eval_train", False, "Evaluate on all training data")
+tf.flags.DEFINE_string("test_data", "music", "Target data for training (default: music)")
+
 
 # Misc Parameters
 tf.flags.DEFINE_boolean("allow_soft_placement", True, "Allow device soft device placement")
@@ -36,7 +38,7 @@ print("")
 
 # CHANGE THIS: Load data. Load your own data here
 if FLAGS.eval_train:
-    x_raw, y_test = read.loadDataForCNN(["books"],"test")
+    x_raw, y_test = read.loadDataForCNN([FLAGS.test_data],"test")
     y_test = np.argmax(y_test, axis=1)
 else:
     x_raw = ["a masterpiece four years in the making", "everything is off."]
@@ -81,7 +83,7 @@ with graph.as_default():
 
         for x_test_batch in batches:
             batch_predictions = sess.run(predictions, {input_x: x_test_batch, dropout_keep_prob: 1.0})
-            # print(batch_predictions)
+            print(batch_predictions)
             all_predictions = np.concatenate([all_predictions, batch_predictions])
 
 # Print accuracy if y_test is defined
