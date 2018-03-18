@@ -1,5 +1,4 @@
 import tensorflow as tf
-from flip_gradient import flip_gradient
 
 class TextCNN(object):
     """
