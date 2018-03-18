@@ -104,11 +104,13 @@ with tf.Graph().as_default():
         optimizer = tf.train.AdamOptimizer(1e-3)
         #grads_and_vars = optimizer.compute_gradients(cnn.loss + cnn.loss_domain)
         #train_op = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
-        grads_and_vars = optimizer.compute_gradients(cnn.loss)
-        train_op1 = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
-        grads_and_vars2=optimizer.compute_gradients(-1*cnn.loss_domain)
-        train_op2 = optimizer.apply_gradients(grads_and_vars2, global_step=global_step)
-        train_op = tf.group(train_op1, train_op2)
+        grads_and_vars = optimizer.compute_gradients(cnn.loss + 1/cnn.loss_domain)
+        train_op = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
+        #l_op = optimizer.minimize(cnn.loss)
+        #d_op = optimizer.minimize(-1*cnn.loss_domain)
+        #grads_and_vars2=optimizer.compute_gradients(-1*cnn.loss_domain)
+        #train_op2 = optimizer.apply_gradients(grads_and_vars2, global_step=global_step)
+        #train_op = tf.group(train_op1, train_op2)
         # Keep track of gradient values and sparsity (optional)
         grad_summaries = []
         for g, v in grads_and_vars:
