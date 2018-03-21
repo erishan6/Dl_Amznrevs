@@ -32,7 +32,8 @@ tf.flags.DEFINE_integer("checkpoint_every", 100, "Save model after this many ste
 tf.flags.DEFINE_integer("num_checkpoints", 1, "Number of checkpoints to store (default: 1)")
 tf.flags.DEFINE_string("source_data", "books", "Source data for training (default: books)")
 tf.flags.DEFINE_string("target_data", "music", "Target data for training (default: music)")
-tf.flags.DEFINE_float("domain_loss_factor_propagation", 0.001, "domain_loss_factor_propagation for training the loss_domain")
+tf.flags.DEFINE_float("domain_loss_factor_propagation", 0.1, "domain_loss_factor_propagation for training the loss_domain")
+tf.flags.DEFINE_float("domain_train_frequency", 0.01, "domain training frequency for training the loss_domain")
 
 # Misc Parameters
 tf.flags.DEFINE_boolean("allow_soft_placement", True, "Allow device soft device placement")
