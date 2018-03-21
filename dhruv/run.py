@@ -32,6 +32,7 @@ tf.flags.DEFINE_integer("checkpoint_every", 100, "Save model after this many ste
 tf.flags.DEFINE_integer("num_checkpoints", 1, "Number of checkpoints to store (default: 1)")
 tf.flags.DEFINE_string("source_data", "books", "Source data for training (default: books)")
 tf.flags.DEFINE_string("target_data", "music", "Target data for training (default: music)")
+tf.flags.DEFINE_float("domain_loss_factor_propagation", 0.001, "domain_loss_factor_propagation for training the loss_domain")
 
 # Misc Parameters
 tf.flags.DEFINE_boolean("allow_soft_placement", True, "Allow device soft device placement")
@@ -105,7 +106,7 @@ with tf.Graph().as_default():
         #grads_and_vars = optimizer.compute_gradients(cnn.loss + cnn.loss_domain)
         #train_op = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
 
-        loss_equation = cnn.loss + 1/cnn.loss_domain
+        loss_equation = (cnn.loss + (FLAGS.domain_loss_factor_propagation)*(1/cnn.loss_domain))
         grads_and_vars = optimizer.compute_gradients(loss_equation)
         train_op = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
         #l_op = optimizer.minimize(cnn.loss)
