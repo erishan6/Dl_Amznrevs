@@ -92,7 +92,7 @@ class TextCNN(object):
             b_d = tf.Variable(tf.constant(0.1, shape=[num_classes]), name="b")
             l2_loss_domain += tf.nn.l2_loss(W)
             l2_loss_domain += tf.nn.l2_loss(b_d)
-            self.scores_domain = tf.nn.xw_plus_b(flip_gradient(self.h_drop), W, b_d, name="domain_scores")
+            self.scores_domain = tf.nn.xw_plus_b(self.h_drop, W, b_d, name="domain_scores")
             self.predictions_domain = tf.argmax(self.scores_domain, 1, name="domain_predictions")
 
         # Calculate mean cross-entropy loss

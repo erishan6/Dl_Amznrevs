@@ -104,7 +104,9 @@ with tf.Graph().as_default():
         optimizer = tf.train.AdamOptimizer(1e-3)
         #grads_and_vars = optimizer.compute_gradients(cnn.loss + cnn.loss_domain)
         #train_op = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
-        grads_and_vars = optimizer.compute_gradients(cnn.loss + 1/cnn.loss_domain)
+
+        loss_equation = cnn.loss + 1/cnn.loss_domain
+        grads_and_vars = optimizer.compute_gradients(loss_equation)
         train_op = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
         #l_op = optimizer.minimize(cnn.loss)
         #d_op = optimizer.minimize(-1*cnn.loss_domain)
@@ -127,7 +129,7 @@ with tf.Graph().as_default():
         print("Writing to {}\n".format(out_dir))
 
         # Summaries for loss and accuracy
-        loss_summary = tf.summary.scalar("loss", cnn.loss + cnn.loss_domain)
+        loss_summary = tf.summary.scalar("loss", loss_equation)
         acc_summary = tf.summary.scalar("accuracy", cnn.accuracy)
 
         # Train Summaries
