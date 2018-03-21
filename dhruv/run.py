@@ -8,6 +8,7 @@ import datetime
 import read
 from network import TextCNN
 from tensorflow.contrib import learn
+from random import random
 
 # Parameters
 # ==================================================
@@ -33,7 +34,7 @@ tf.flags.DEFINE_integer("num_checkpoints", 1, "Number of checkpoints to store (d
 tf.flags.DEFINE_string("source_data", "books", "Source data for training (default: books)")
 tf.flags.DEFINE_string("target_data", "music", "Target data for training (default: music)")
 tf.flags.DEFINE_float("domain_loss_factor_propagation", 0.1, "domain_loss_factor_propagation for training the loss_domain")
-tf.flags.DEFINE_float("domain_train_frequency", 0.01, "domain training frequency for training the loss_domain")
+tf.flags.DEFINE_float("domain_train_frequency", -1, "domain training frequency for training the loss_domain. A negative value implies seperate training is switched off.")
 
 # Misc Parameters
 tf.flags.DEFINE_boolean("allow_soft_placement", True, "Allow device soft device placement")
@@ -107,7 +108,16 @@ with tf.Graph().as_default():
         #grads_and_vars = optimizer.compute_gradients(cnn.loss + cnn.loss_domain)
         #train_op = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
 
-        loss_equation = (cnn.loss + (FLAGS.domain_loss_factor_propagation)*(1/cnn.loss_domain))
+        if FLAGS.domain_train_frequency < 0:
+            # seperate training is switched off, use constant equation
+            loss_equation = (cnn.loss + (FLAGS.domain_loss_factor_propagation)*(1/cnn.loss_domain))
+
+        elif random()> FLAGS.domain_train_frequency:
+            loss_equation = cnn.loss
+        else:
+            loss_equation = cnn.domain_loss
+
+
         grads_and_vars = optimizer.compute_gradients(loss_equation)
         train_op = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
         #l_op = optimizer.minimize(cnn.loss)
