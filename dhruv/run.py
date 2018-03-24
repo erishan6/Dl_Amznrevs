@@ -38,6 +38,7 @@ tf.flags.DEFINE_float("domain_train_frequency", -1, "domain training frequency f
 
 tf.flags.DEFINE_boolean("use_adam", True, "Select optimizer to use. Default is AdamOptimizer, else use RMSPropOptimizer")
 
+tf.flags.DEFINE_string("activation_function", "relu", "Select activation function to use. Default is relu")
 # Misc Parameters
 tf.flags.DEFINE_boolean("allow_soft_placement", True, "Allow device soft device placement")
 tf.flags.DEFINE_boolean("log_device_placement", False, "Log placement of ops on devices")
@@ -102,7 +103,8 @@ with tf.Graph().as_default():
             embedding_size=FLAGS.embedding_dim,
             filter_sizes=list(map(int, FLAGS.filter_sizes.split(","))),
             num_filters=FLAGS.num_filters,
-            l2_reg_lambda=FLAGS.l2_reg_lambda)
+            l2_reg_lambda=FLAGS.l2_reg_lambda,
+            activation_function=FLAGS.activation_function)
 
         # Define Training procedure
         global_step = tf.Variable(0, name="global_step", trainable=False)

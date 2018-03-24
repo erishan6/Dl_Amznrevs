@@ -7,7 +7,7 @@ class TextCNN(object):
     """
     def __init__(
       self, sequence_length, num_classes, vocab_size,
-      embedding_size, filter_sizes, num_filters, l2_reg_lambda=0.0):
+      embedding_size, filter_sizes, num_filters, l2_reg_lambda=0.0, activation_function):
 
         # Placeholders for input, output and dropout
         self.input_x = tf.placeholder(tf.int32, [None, sequence_length], name="input_x")
@@ -42,7 +42,20 @@ class TextCNN(object):
                     padding="VALID",
                     name="conv")
                 # Apply nonlinearity
-                h = tf.nn.relu(tf.nn.bias_add(conv, b), name="relu")
+
+                if activation_function=="tanh" :
+                    print (activation_function)
+                    h = tf.nn.relu(tf.nn.bias_add(conv, b), name="activation_function")
+                elif activation_function=="elu" :
+                    print (activation_function)
+                    h = tf.nn.relu(tf.nn.bias_add(conv, b), name="activation_function")
+                elif activation_function=="softplus" :
+                    print (activation_function)
+                    h = tf.nn.relu(tf.nn.bias_add(conv, b), name="activation_function")
+                else :
+                    print (activation_function)
+                    h = tf.nn.relu(tf.nn.bias_add(conv, b), name="activation_function")
+
                 # Maxpooling over the outputs
                 pooled = tf.nn.max_pool(
                     h,
