@@ -44,16 +44,12 @@ class TextCNN(object):
                 # Apply nonlinearity
 
                 if activation_function=="tanh" :
-                    print (activation_function)
                     h = tf.nn.relu(tf.nn.bias_add(conv, b), name="activation_function")
                 elif activation_function=="elu" :
-                    print (activation_function)
                     h = tf.nn.relu(tf.nn.bias_add(conv, b), name="activation_function")
                 elif activation_function=="softplus" :
-                    print (activation_function)
                     h = tf.nn.relu(tf.nn.bias_add(conv, b), name="activation_function")
                 else :
-                    print (activation_function)
                     h = tf.nn.relu(tf.nn.bias_add(conv, b), name="activation_function")
 
                 # Maxpooling over the outputs
