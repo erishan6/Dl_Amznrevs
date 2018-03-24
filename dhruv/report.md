@@ -20,6 +20,8 @@ Initial training to be done on books-music (source/target) and testing on all th
 
 #### Research questions: modify network.py
 ##### Ishan: activation functions
+https://towardsdatascience.com/secret-sauce-behind-the-beauty-of-deep-learning-beginners-guide-to-activation-functions-a8e23a57d046
+https://www.tensorflow.org/api_guides/python/nn#Activation_Functions
 -
 
 ##### Dhruv: effect of different optimizers
