@@ -115,7 +115,7 @@ with tf.Graph().as_default():
         elif random()> FLAGS.domain_train_frequency:
             loss_equation = cnn.loss
         else:
-            loss_equation = cnn.domain_loss
+            loss_equation = 1/cnn.domain_loss
 
 
         grads_and_vars = optimizer.compute_gradients(loss_equation)
