@@ -16,6 +16,26 @@ columns mean that a given model is evaluated on different data sets
 
 ### Experiments
 
+Initial training to be done on books-music (source/target) and testing on all three datasets.
+
+#### Research questions: modify network.py
+##### Ishan: activation functions
+-
+
+##### Dhruv: effect of different optimizers
+https://smist08.wordpress.com/2016/10/04/the-road-to-tensorflow-part-10-more-on-optimization/
+
+Adam and RMSProp
+
+#### Method: only applies to run.py file
+Train network according to research question for different values of alpha and min(1/d)
+
+- aplha = 0.05, 0.1, 0.2
+- min(1/d) = 0.05, 0.1, 0.2
+- combination= (0.05,0.05), (0.1,0.1), (0.2,0.2)
+
+See the best configuration and then train all other domain pairs on that configuration.
+
 #### Failed attempts:
 the following configurations did not work, accuracy below 60%
 Loss function eqn:
@@ -37,3 +57,7 @@ perform all possible iterations for the following configurations (i.e. all domai
 
 ##### do both of the above at the same time
 - alpha, frequency = (0.01, 0.01), (0.1, 0.1), (0.2, 0.2),
+
+
+### Format
+trained on pair:

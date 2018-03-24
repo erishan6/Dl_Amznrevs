@@ -36,6 +36,8 @@ tf.flags.DEFINE_string("target_data", "music", "Target data for training (defaul
 tf.flags.DEFINE_float("domain_loss_factor_propagation", 0.1, "domain_loss_factor_propagation for training the loss_domain")
 tf.flags.DEFINE_float("domain_train_frequency", -1, "domain training frequency for training the loss_domain. A negative value implies seperate training is switched off.")
 
+tf.flags.DEFINE_boolean("use_adam", True, "Select optimizer to use. Default is AdamOptimizer, else use RMSPropOptimizer")
+
 # Misc Parameters
 tf.flags.DEFINE_boolean("allow_soft_placement", True, "Allow device soft device placement")
 tf.flags.DEFINE_boolean("log_device_placement", False, "Log placement of ops on devices")
@@ -104,7 +106,10 @@ with tf.Graph().as_default():
 
         # Define Training procedure
         global_step = tf.Variable(0, name="global_step", trainable=False)
-        optimizer = tf.train.AdamOptimizer(1e-3)
+        if FLAGS.use_adam:
+            optimizer = tf.train.AdamOptimizer(1e-3)
+        else:
+            optimizer = tf.train.RMSPropOptimizer(1e-3)
         #grads_and_vars = optimizer.compute_gradients(cnn.loss + cnn.loss_domain)
         #train_op = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
 
