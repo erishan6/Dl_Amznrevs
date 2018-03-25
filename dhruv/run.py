@@ -50,6 +50,11 @@ for attr, value in sorted(FLAGS.__flags.items()):
     print("{}={}".format(attr.upper(), value))
 print("")
 
+print("use_adam=" + str(FLAGS.use_adam))
+print("activation_function=" + str(FLAGS.activation_function))
+print("domain_loss_factor_propagation=" + str(FLAGS.domain_loss_factor_propagation))
+print("domain_train_frequency=" + str(FLAGS.domain_train_frequency))
+
 
 # Data Preparation
 # ==================================================
