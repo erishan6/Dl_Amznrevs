@@ -54,7 +54,8 @@ print("use_adam=" + str(FLAGS.use_adam))
 print("activation_function=" + str(FLAGS.activation_function))
 print("domain_loss_factor_propagation=" + str(FLAGS.domain_loss_factor_propagation))
 print("domain_train_frequency=" + str(FLAGS.domain_train_frequency))
-
+print("source_data=" + str(FLAGS.source_data))
+print("domain_data=" + str(FLAGS.domain_data))
 
 # Data Preparation
 # ==================================================
