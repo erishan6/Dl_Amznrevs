@@ -67,6 +67,10 @@ We will make more detailed instructions available at
 regularly.
 
 
+\section{Classification with CNN}
+
+Describe the baseline model
+
 \section{Domain Adversial Training}
 
 Manuscripts must be in two-column format.  Exceptions to the
@@ -81,7 +85,7 @@ should not exceed the maximum page limit described in Section~\ref{sec:length}.
 Do not number the pages.
 
 
-\subsection{Electronically-available resources}
+\subsection{Method}
 
 We strongly prefer that you prepare your PDF files using \LaTeX\ with
 the official ACL 2015 style file (acl2015.sty) and bibliography style
@@ -330,7 +334,12 @@ tables below the body, using 11 point text.
 
 
 \section{Dataset}
+The data is from 3 different domains (books, dvds, movies) and 3 different languages (German, English, French).
+We have only used the English dataset for this work. The data has been obtained from: \url{https://www.uni-weimar.de/en/media/chairs/computer-science-and-media/webis/corpora/corpus-webis-cls-10/} and it is described in~\cite{PB:2010}.
 
+For each language and each domain there are 2000 training examples and 2000 test examples. The ratings to positive/negative sentiment are mapped as follows: 1.0, 2.0 -> negative, 4.0, 5.0 -> positive. There are no instances with a rating of 3.0. The datasets are balanced, this means for each language and each domain 50\% of the items have a positive and 50\% have a negative rating.
+
+% Delete from here
 Following ACL 2014 we will also we will attempt to automatically convert
 your \LaTeX\ source files to publish papers in machine-readable
 XML with semantic markup in the ACL Anthology, in addition to the
@@ -342,7 +351,7 @@ years to XML.
 We encourage you to submit a ZIP file of your \LaTeX\ sources along
 with the camera-ready version of your paper. We will then convert them
 to XML automatically, using the LaTeXML tool
-(\url{http://dlmf.nist.gov/LaTeXML}). LaTeXML has \emph{bindings} for
+(). LaTeXML has \emph{bindings} for
 a number of \LaTeX\ packages, including the ACL 2015 stylefile. These
 bindings allow LaTeXML to render the commands from these packages
 correctly in XML. For best results, we encourage you to use the
@@ -354,6 +363,8 @@ packages that are officially supported by LaTeXML, listed at
 
 
 \section{Experiments and Results}
+
+\subsection{Research Question}
 
 It is also advised to supplement non-English characters and terms
 with appropriate transliterations and/or translations
