@@ -256,7 +256,7 @@ in Arabic numerals. Do not number subsubsections.
 as~\cite{Gusfield:97} or, if the author's name appears in the text
 itself, as Gusfield~\shortcite{Gusfield:97}.  Append lowercase letters
 to the year in cases of ambiguity.  Treat double authors as
-in~\cite{PB:2010}, but write as in~\cite{Chandra:81} when more than two
+in~\cite{PB:2010}, but write as in~\cite{Ganin:2016} when more than two
 authors are involved. Collapse multiple citations as
 in~\cite{Gusfield:97,PB:2010}. Also refrain from using full citations
 as sentence constituents. We suggest that instead of
@@ -297,7 +297,7 @@ such as the one for {\em Computational Linguistics\/} or the one in the
 Psychological Association\/}~\cite{APA:83}.  Use of full names for
 authors rather than initials is preferred.  A list of abbreviations
 for common computer science journals can be found in the ACM
-{\em Computing Reviews\/}~\cite{ACM:83}.
+{\em Computing Reviews\/}~\cite{Chen:2016}.
 
 The \LaTeX{} and Bib\TeX{} style files provided roughly fit the
 American Psychological Association format, allowing regular citations,
@@ -383,36 +383,38 @@ when submitting your paper for review.
 %\bibliography{acl2015}
 
 \begin{thebibliography}{}
-
-\bibitem[\protect\citename{Prettenhofer and Stein}2010]{PB:2010}
+% this paper describes the dataset.
+\bibitem[\protect\citename{{Prettenhofer and Stein}}2010]{PB:2010}
 Prettenhofer, Peter and Stein, Benno
 \newblock 2010.
 \newblock {\em Cross-language Text Classification Using Structural Correspondence Learning}.
 \newblock Proceedings of the 48th Annual Meeting of the Association for Computational Linguistics.
 
-\bibitem[\protect\citename{{American Psychological Association}}1983]{APA:83}
-{American Psychological Association}.
-\newblock 1983.
-\newblock {\em Publications Manual}.
-\newblock American Psychological Association, Washington, DC.
+\bibitem[\protect\citename{{Chen \bgroup et al.\egroup }}2016]{Chen:2016}
+Xilun Chen and Ben Athiwaratkun and Yu Sun and Kilian Q. Weinberger and Claire Cardie.
+\newblock 2016.
+\newblock {\em Adversarial Deep Averaging Networks for Cross-Lingual Sentiment Classification}.
+\newblock CoRR.
 
-\bibitem[\protect\citename{{Association for Computing Machinery}}1983]{ACM:83}
-{Association for Computing Machinery}.
-\newblock 1983.
-\newblock {\em Computing Reviews}, 24(11):503--512.
+\bibitem[\protect\citename{{Ganin \bgroup et al.\egroup }}2016]{Ganin:2016}
+Ganin, Yaroslav and Ustinova, Evgeniya and Ajakan, Hana and Germain, Pascal and Larochelle, Hugo and Laviolette, Fran\c{c}ois and Marchand, Mario and Lempitsky, Victor.
+\newblock 2016.
+\newblock {\em Domain-adversarial Training of Neural Networks},
+  17(1):2096--2030.
+\newblock J. Mach. Learn. Res.
 
-\bibitem[\protect\citename{Chandra \bgroup et al.\egroup }1981]{Chandra:81}
-Ashok~K. Chandra, Dexter~C. Kozen, and Larry~J. Stockmeyer.
-\newblock 1981.
-\newblock Alternation.
-\newblock {\em Journal of the Association for Computing Machinery},
-  28(1):114--133.
+\bibitem[\protect\citename{Britz}]{Britz}
+Denny Britz.
+\newblock 2015.
+\newblock {\em Implementing a CNN for Text Classification in TensorFlow}.
+\newblock http://www.wildml.com/2015/12/implementing-a-cnn-for-text-classification-in-tensorflow/.
 
-\bibitem[\protect\citename{Gusfield}1997]{Gusfield:97}
-Dan Gusfield.
-\newblock 1997.
-\newblock {\em Algorithms on Strings, Trees and Sequences}.
-\newblock Cambridge University Press, Cambridge, UK.
+\bibitem[\protect\citename{Britz Github}]{Britz:github}
+Denny Britz.
+\newblock 2015.
+\newblock {\em dennybritz/cnn-text-classification-tf}.
+\newblock https://github.com/dennybritz/cnn-text-classification-tf.
+
 
 \end{thebibliography}
 
