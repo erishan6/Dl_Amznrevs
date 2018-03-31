@@ -56,19 +56,45 @@
 
 \section{Introduction}
 
-intro, basic motivation
+We have tried to develop a sentiment classifier in this project for product reviews scraped from Amazon while addressing the problem of Domain Adaptation. This means that our classifier learns in the presence of a shift in the domains of training and testing environments. We achieve this by training a domain and sentiment classifier together using Adverserial training. In this approach, the loss of sentiment classifier is minimized while that of the domain classifier is maximized so that the sentiment predictions are made independent of domain. We first experiment with a straightforward CNN classifier to define a baseline performance and then modify the network by adding domain adverserial training to it.
+
+We will also explore the following research questions:
+\begin{itemize}
+  \item Training procedure.
+  \item Effect of Optimizers (Dhruv)
+  \item Effect of Activation functions (Ishan)
+\end{itemize}
 
 \section{Classification with CNN}
 
-Describe the baseline model
+We take the model described in ~\cite{Britz} as the baseline and modify it to train on our dataset. It looks like Figure ~\ref{fig:figure1}. The first layer converts words into embedding vectors. The next layer performs convolutions over the embedded word vectors using multiple filter sizes. Next, we max-pool the result of the convolutional layer into a long feature vector, add dropout regularization, and classify the result using a softmax layer.
 
 \begin{figure}[htb]
 \begin{center}
 \includegraphics[width=\columnwidth]{cnn.png}
 \end{center}
-\caption{Caption here, source: ~\cite{Britz}}
+\caption{Image source: ~\cite{Britz}}
 \label{fig:figure1}
 \end{figure}
+
+We trained different models on all domains (books, dvd, music) and then evaluated them on all the domains. Table ~\ref{cnn-table} gives a summary of the accuracies calculated on test set. Rows mean that a given dataset is evaluated on different models. Columns mean that a given model is evaluated on different data sets. Therefore, for row "books" and column "dvd" means that the model trained on "dvd" is evaluated on "books". As expected, the model performs best when both the training and testing domain is the same. The accuracies are thus the highest across the diagonal. This model uses "ReLU" as the activation and "Adam" as the optimizer.
+
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline \bf & \bf Books & \bf Dvd & \bf Music \\ \hline
+Books & 0.766 & 0.7325 & 0.6815 \\
+Dvd & 0.7165 & 0.756 & 0.7105 \\
+Music & 0.709 & 0.7455 & 0.77 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{ Font guide. }
+\label{cnn-table}
+\end{table}
+
+
 
 \section{Domain Adversial Training}
 
