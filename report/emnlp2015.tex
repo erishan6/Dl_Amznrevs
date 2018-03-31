@@ -116,8 +116,15 @@ learning task on the source domain and unbiased towards the shift between the do
 The architecture includes feature extractor(green), label predictor(blue) and domain classifier(red). In Layer 1,  we convert the input sentences into vector space using using word embedding from GLoVe. This outputs a matrix for each review. In Layer 2 and 3,  we use CNN and then max-pool to convert input matrix into a column vector.  In Layer 4, single layer with activation function (feature extractor). In Layer 5 and 6, single layer with softmax with feature extractor output as the input to both layers. 
 
 \subsection{Our Approach}
-To implement domain adversarial training in our neural network, we have followed two approaches. In approach 1, we have introduced one more hyperparameter in the network named domainlossfactorpropagation ie we include a factor of domain loss in the backpropagation each time. In this way, our network tries to minimize the combined loss of label prediction loss along with small factor of domain classification loss. In approach 2, we used another hyperparameter named domaintrainfrequency ie in each epoch, we generate random number and on the basis of that number we train our loss equation(approach inspired from natural selection genetic algorithm).
+\begin{figure}[htb]
+\begin{center}
+\includegraphics[width=\columnwidth]{tensorflow_nn.png}
+\end{center}
+\caption{Our Neural Network viewed on Tensorboard}
+\label{fig:figure3}
+\end{figure}
 
+To implement domain adversarial training in our neural network, we have followed two approaches. In approach 1, we have introduced one more hyperparameter in the network named domainlossfactorpropagation ie we include a factor of domain loss in the backpropagation each time. In this way, our network tries to minimize the combined loss of label prediction loss along with small factor of domain classification loss. In approach 2, we used another hyperparameter named domaintrainfrequency ie in each epoch, we generate random number and on the basis of that number we train our loss equation(approach inspired from natural selection genetic algorithm).
 
 \subsection{Research Question}
 
