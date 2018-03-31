@@ -96,7 +96,7 @@ Music & 0.709 & 0.7455 & 0.77 \\
 
 
 
-\section{Domain Adversial Training}
+\section{Domain Adversarial Training}
 
 We followed the approach based on domain adaptation described in ~\cite{Ganin} paper.
 In this approach, neural network architectures that are trained on labeled data from
@@ -104,8 +104,20 @@ the source domain and unlabeled data from the target domain. As the training con
 the procedure encourages prominence of features that are biased towards for the main
 learning task on the source domain and unbiased towards the shift between the domains.
 
-\subsection{Method}
-Describe the specific network.
+\subsection{Domain Adversarial Neural Network Architecture}
+\begin{figure}[htb]
+\begin{center}
+\includegraphics[width=\columnwidth]{dann.png}
+\end{center}
+\caption{Domain Adversarial Training Neural Network, Image source: ~\cite{Ganin}}
+\label{fig:figure2}
+\end{figure}
+
+The architecture includes feature extractor(green), label predictor(blue) and domain classifier(red). In Layer 1,  we convert the input sentences into vector space using using word embedding from GLoVe. This outputs a matrix for each review. In Layer 2 and 3,  we use CNN and then max-pool to convert input matrix into a column vector.  In Layer 4, single layer with activation function (feature extractor). In Layer 5 and 6, single layer with softmax with feature extractor output as the input to both layers. 
+
+\subsection{Our Approach}
+To implement domain adversarial training in our neural network, we have followed two approaches. In approach 1, we have introduced one more hyperparameter in the network named domainlossfactorpropagation ie we include a factor of domain loss in the backpropagation each time. In this way, our network tries to minimize the combined loss of label prediction loss along with small factor of domain classification loss. In approach 2, we used another hyperparameter named domaintrainfrequency ie in each epoch, we generate random number and on the basis of that number we train our loss equation(approach inspired from natural selection genetic algorithm).
+
 
 \subsection{Research Question}
 
