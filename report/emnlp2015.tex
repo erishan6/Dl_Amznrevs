@@ -90,7 +90,7 @@ Music & 0.709 & 0.7455 & 0.77 \\
 \hline
 \end{tabular}
 \end{center}
-\caption{ Font guide. }
+\caption{ Training results for baseline CNN }
 \label{cnn-table}
 \end{table}
 
@@ -112,6 +112,62 @@ We have only used the English dataset for this work. The data has been obtained 
 For each language and each domain there are 2000 training examples and 2000 test examples. The ratings to positive/negative sentiment are mapped as follows: 1.0, 2.0: negative, 4.0, 5.0: positive. There are no instances with a rating of 3.0. The datasets are balanced, this means for each language and each domain 50\% of the items have a positive and 50\% have a negative rating.
 
 \section{Experiments and Results}
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|}
+\hline Activation & Domain loss \% & Books & Dvd & Music \\ \hline
+Relu & 0.05 & 0.7375 & 0.756 & 0.715  \\
+ & 0.1 & 0.741 & 0.7465 & 0.703 \\
+ & 0.2 & 0.742 & 0.7435 & 0.7155 \\
+\hline
+tanh & 0.05 & 0.755 & 0.7655 & 0.7255 \\
+ & 0.1 & 0.75 & 0.7515 & 0.7035 \\
+ & 0.2 & 0.741 & 0.7355 & 0.7145 \\
+\hline
+elu & 0.05 & 0.7395 & 0.7515 & 0.712 \\
+ & 0.1 & 0.75 & 0.7515 & 0.727 \\
+ & 0.2 & 0.7375 & 0.739 & 0.705 \\
+\hline
+softplus & 0.05 & 0.7545 & 0.766 & 0.7335 \\
+ & 0.1 & 0.7585 & 0.763 & 0.747 \\
+ & 0.2 & 0.744 & 0.746 & 0.728 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{ Training on books-music pair with domain loss factor propagation and activation functions}
+\label{dd-table}
+\end{table}
+
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|}
+\hline Activation & Domain train frequency \% & Books & Dvd & Music \\ \hline
+relu & 0.05 & 0.766 & 0.7775 & 0.737 \\
+  & 0.1 & 0.7555 & 0.7585 & 0.7185 \\
+  & 0.2 & 0.5 & 0.5 & 0.5 \\
+\hline
+tanh & 0.05 & 0.5 & 0.5 & 0.5  \\
+  & 0.1 & 0.754 & 0.767 & 0.719 \\
+\hline
+elu & 0.05 & 0.755 & 0.7675 & 0.737 \\
+  & 0.1 & 0.746 & 0.766 & 0.731 \\
+\hline
+softplus & 0.05 & 0.766 & 0.7675 & 0.7315 \\
+  & 0.1 & 0.76 & 0.768 & 0.721 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{ Training on books-music pair with domain train frequency and activation functions}
+\label{dd-table}
+\end{table}
+
+
+
+
+
+
 
 
 
