@@ -98,7 +98,7 @@ Music & 0.709 & 0.7455 & 0.77 \\
 
 \section{Domain Adversarial Training}
 
-We followed the approach based on domain adaptation described in ~\cite{Ganin} paper.
+We followed the approach based on domain adaptation described in ~\cite{Ganin:2016} paper.
 In this approach, neural network architectures that are trained on labeled data from
 the source domain and unlabeled data from the target domain. As the training continues,
 the procedure encourages prominence of features that are biased towards for the main
@@ -109,11 +109,11 @@ learning task on the source domain and unbiased towards the shift between the do
 \begin{center}
 \includegraphics[width=\columnwidth]{dann.png}
 \end{center}
-\caption{Domain Adversarial Training Neural Network, Image source: ~\cite{Ganin}}
+\caption{Domain Adversarial Training Neural Network, Image source: ~\cite{Ganin:2016}}
 \label{fig:figure2}
 \end{figure}
 
-The architecture includes feature extractor(green), label predictor(blue) and domain classifier(red). In Layer 1,  we convert the input sentences into vector space using using word embedding from GLoVe. This outputs a matrix for each review. In Layer 2 and 3,  we use CNN and then max-pool to convert input matrix into a column vector.  In Layer 4, single layer with activation function (feature extractor). In Layer 5 and 6, single layer with softmax with feature extractor output as the input to both layers. 
+The architecture includes feature extractor(green), label predictor(blue) and domain classifier(red). In Layer 1,  we convert the input sentences into vector space using using word embedding from GLoVe. This outputs a matrix for each review. In Layer 2 and 3,  we use CNN and then max-pool to convert input matrix into a column vector.  In Layer 4, single layer with activation function (feature extractor). In Layer 5 and 6, single layer with softmax with feature extractor output as the input to both layers.
 
 \subsection{Our Approach}
 \begin{figure}[htb]
@@ -160,7 +160,7 @@ softplus & 0.05 & 0.7545 & 0.766 & 0.7335 \\
 \hline
 \end{tabular}
 \end{center}
-\caption{ Training on books-music pair with domain loss factor propagation and activation functions}
+\caption{ Training on books-music pair with domain loss factor propagation and activation functions with Adam Optimizer}
 \label{dd-table}
 \end{table}
 
@@ -186,13 +186,47 @@ softplus & 0.05 & 0.766 & 0.7675 & 0.7315 \\
 \hline
 \end{tabular}
 \end{center}
-\caption{ Training on books-music pair with domain train frequency and activation functions}
+\caption{ Training on books-music pair with domain train frequency and activation functions with Adam Optimizer}
 \label{dd-table}
 \end{table}
 
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|c|l|l|l|l|}
+\hline
+Activation & \multicolumn{1}{|p{1cm}|}{Domain loss \%}& Books & Dvd & Music \\
+\hline
+Adam & 0.05 & 0.7375 & 0.756 & 0.715 \\
+ & 0.1 & 0.741 & 0.7465 & 0.703 \\
+ & 0.2 & 0.742 & 0.7435 & 0.7155 \\
+\hline
+RMSprop & 0.05 & 0.781 & 0.7875 & 0.764 \\
+ & 0.1 & 0.788 & 0.801 & 0.777 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{ Training on books-music pair with domain loss factor propagation and optimizers with ReLU activation}
+\label{dd-table}
+\end{table}
 
-
-
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|c|l|l|l|l|}
+\hline
+Activation & \multicolumn{1}{|p{1cm}|}{Domain train frequency}& Books & Dvd & Music \\
+\hline
+Adam & 0.05 & 0.766 & 0.7775 & 0.737 \\
+ & 0.1 & 0.7555 & 0.7585 & 0.7185 \\
+ & 0.2 & 0.5 & 0.5 & 0.5 \\
+\hline
+RMSprop & 0.05 & 0.784 & 0.7995 & 0.766 \\
+ & 0.1 & 0.787 & 0.7995 & 0.7825 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{ Training on books-music pair with domain train frequency and optimizers with ReLU activation}
+\label{dd-table}
+\end{table}
 
 
 
