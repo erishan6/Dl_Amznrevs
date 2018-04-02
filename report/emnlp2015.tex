@@ -124,9 +124,28 @@ The architecture includes feature extractor(green), label predictor(blue) and do
 \label{fig:figure3}
 \end{figure}
 
-To implement domain adversarial training in our neural network, we have followed two approaches. In approach 1, we have introduced one more hyperparameter in the network named domainlossfactorpropagation ie we include a factor of domain loss in the backpropagation each time. In this way, our network tries to minimize the combined loss of label prediction loss along with small factor of domain classification loss. In approach 2, we used another hyperparameter named domaintrainfrequency ie in each epoch, we generate random number and on the basis of that number we train our loss equation(approach inspired from natural selection genetic algorithm).
+Our objective is to minimize the label loss and maximise the domain loss. We tried a couple of ways to achieve this and we report two techniques which worked the best.
+
+\subsubsection{Approach 1}
+We have introduced a hyperparameter in the network named domain\_loss\_factor\_propagation i.e. we include a percentage of domain loss in the in the total loss at every step time. In this way, our network tries to minimize the combined loss of label prediction loss along with small factor of domain classification loss. The loss equation being minimised is:
+\begin{itemize}
+  \item label\_loss + domain\_loss\_factor\_propagation*(1/domain\_loss)
+\end{itemize}
+
+
+\subsubsection{Approach 2}
+We introduce a different hyperparameter named domain\_train\_frequency. In this scheme, we train the randomly train either the label network or the domain network based on the hyperparameter value. The following values are minimised:
+
+\begin{itemize}
+  \item (1/domain\_loss) randomly "domain\_train\_frequency" times out of the total training steps
+  \item label\_loss otherwise
+\end{itemize}
 
 \subsection{Research Question}
+
+\subsection{Research Question: Optimizers}
+We trained the network for the two approaches described above using two different types of gradient descent optimizers: RMSprop and Adam. To briefly describe them, RMSprop divides the gradient by a running average of its recent magnitude while Adam also uses the average of the second moments of the gradients. Both optimizers were initilized to start from the same learning rate.
+
 
 \section{Dataset}
 The data is from 3 different domains (books, dvds, movies) and 3 different languages (German, English, French).
@@ -135,6 +154,7 @@ We have only used the English dataset for this work. The data has been obtained 
 For each language and each domain there are 2000 training examples and 2000 test examples. The ratings to positive/negative sentiment are mapped as follows: 1.0, 2.0: negative, 4.0, 5.0: positive. There are no instances with a rating of 3.0. The datasets are balanced, this means for each language and each domain 50\% of the items have a positive and 50\% have a negative rating.
 
 \section{Experiments and Results}
+Table ~\ref{alpha-optimizer-table} and ~\ref{1d-optimizer-table} compare the accuracies for networks trained using ReLU as the activation function and changing the optimizers between Adam and RMSprop for different values of hyperparameters and domain\_train\_frequency
 
 \begin{table}[h]
 \begin{center}
@@ -161,7 +181,7 @@ softplus & 0.05 & 0.7545 & 0.766 & 0.7335 \\
 \end{tabular}
 \end{center}
 \caption{ Training on books-music pair with domain loss factor propagation and activation functions with Adam Optimizer}
-\label{dd-table}
+\label{alpha-activation-table}
 \end{table}
 
 
@@ -187,7 +207,7 @@ softplus & 0.05 & 0.766 & 0.7675 & 0.7315 \\
 \end{tabular}
 \end{center}
 \caption{ Training on books-music pair with domain train frequency and activation functions with Adam Optimizer}
-\label{dd-table}
+\label{1d-activation-table}
 \end{table}
 
 \begin{table}[h]
@@ -206,7 +226,7 @@ RMSprop & 0.05 & 0.781 & 0.7875 & 0.764 \\
 \end{tabular}
 \end{center}
 \caption{ Training on books-music pair with domain loss factor propagation and optimizers with ReLU activation}
-\label{dd-table}
+\label{alpha-optimizer-table}
 \end{table}
 
 \begin{table}[h]
@@ -225,7 +245,7 @@ RMSprop & 0.05 & 0.784 & 0.7995 & 0.766 \\
 \end{tabular}
 \end{center}
 \caption{ Training on books-music pair with domain train frequency and optimizers with ReLU activation}
-\label{dd-table}
+\label{1d-optimizer-table}
 \end{table}
 
 
