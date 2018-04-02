@@ -144,7 +144,11 @@ We introduce a different hyperparameter named domain\_train\_frequency. In this 
 \subsection{Research Question}
 
 \subsection{Research Question: Optimizers}
-We trained the network for the two approaches described above using two different types of gradient descent optimizers: RMSprop and Adam. To briefly describe them, RMSprop divides the gradient by a running average of its recent magnitude while Adam also uses the average of the second moments of the gradients. Both optimizers were initilized to start from the same learning rate.
+We trained the network for the two approaches described above using two different types of gradient descent optimizers: RMSprop and Adam. To briefly describe them, RMSprop divides the gradient by a running average of its recent magnitude while Adam in addition also uses the average of the second moments of the gradients.
+
+We used stardard implementations provided in Tensorflow with all the default parameters except epsilon (which is a small constant provided for avoiding zero denominator) which given a value of 1e-3. The loss equation used is as stated in the two approaches above.
+
+A detailed description of how the optimization algorithm works is beyond the scope of this work. The experiments section describes the a comparative analysis of the performance of using optimizers.
 
 
 \section{Dataset}
@@ -154,7 +158,9 @@ We have only used the English dataset for this work. The data has been obtained 
 For each language and each domain there are 2000 training examples and 2000 test examples. The ratings to positive/negative sentiment are mapped as follows: 1.0, 2.0: negative, 4.0, 5.0: positive. There are no instances with a rating of 3.0. The datasets are balanced, this means for each language and each domain 50\% of the items have a positive and 50\% have a negative rating.
 
 \section{Experiments and Results}
-Table ~\ref{alpha-optimizer-table} and ~\ref{1d-optimizer-table} compare the accuracies for networks trained using ReLU as the activation function and changing the optimizers between Adam and RMSprop for different values of hyperparameters and domain\_train\_frequency
+Table ~\ref{alpha-optimizer-table} and ~\ref{1d-optimizer-table} compare the accuracies for networks trained using ReLU as the activation function and changing the optimizers between Adam and RMSprop for different values of hyperparameters and domain\_train\_frequency. As can be seen, RMSprop clearly outperforms Adam.
+
+Another patter which emerges from the tables is that slightly higher values of hyperparameters completely destroy the performance. For example, in Table ~\ref{1d-optimizer-table}, the value of 0.2 for domain\_train\_frequency results in no learning at all because the network is making random guesses. Due to this reason, we did not train RMSprop for this value.
 
 \begin{table}[h]
 \begin{center}
