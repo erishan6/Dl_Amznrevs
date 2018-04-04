@@ -143,8 +143,8 @@ We introduce a different hyperparameter named domain\_train\_frequency. In this 
 \end{itemize}
 
 \subsection{Research Question: Effect of Activation Functions}
-To briefly describe the purpose of activation functions is to add the non-linearity to the neural networks. Activation functions which are easily differentiable and easy to train should be used. So we trained the network for the two approaches described above using four different types of activation functions: [ReLU, Tanh, ELU and Softplus].
-We used stardard implementations provided in Tensorflow with all the default parameters.
+Activation functions which are easily differentiable and easy to train should be used in neural networks. To briefly describe the purpose of activation functions is to add the non-linearity to the neural networks. So we trained the network for the two approaches described above using four different types of activation functions: [ReLU, Tanh, ELU and Softplus].
+We used stardard implementations provided in Tensorflow with all the default parameters. The experiments section describes the a comparative analysis of the performance of different activation functions named above.
 
 Brief description of the described activation functions are as follows:-
 \subsubsection{ReLU}
@@ -215,9 +215,13 @@ We have only used the English dataset for this work. The data has been obtained 
 For each language and each domain there are 2000 training examples and 2000 test examples. The ratings to positive/negative sentiment are mapped as follows: 1.0, 2.0: negative, 4.0, 5.0: positive. There are no instances with a rating of 3.0. The datasets are balanced, this means for each language and each domain 50\% of the items have a positive and 50\% have a negative rating.
 
 \section{Experiments and Results}
-Table ~\ref{alpha-optimizer-table} and ~\ref{1d-optimizer-table} compare the accuracies for networks trained using ReLU as the activation function and changing the optimizers between Adam and RMSprop for different values of hyperparameters and domain\_train\_frequency. As can be seen, RMSprop clearly outperforms Adam.
+Table~\ref{alpha-activation-table} and~\ref{1d-activation-table} compare the accuracies for networks trained using Adam as the optimizer and changing the activation functions from the set[ReLU, Tanh, ELU and Softplus] for different values of hyperparameters named domain\_loss\_factor\_propagation and domain\_train\_frequency. As can be seen, Softplus clearly outperforms every other activation functions.
 
-Another patter which emerges from the tables is that slightly higher values of hyperparameters completely destroy the performance. For example, in Table ~\ref{1d-optimizer-table}, the value of 0.2 for domain\_train\_frequency results in no learning at all because the network is making random guesses. Due to this reason, we did not train RMSprop for this value.
+Another pattern which emerges from the tables is that son increasing the values, the performance gets deteriorated. For example, in Table ~\ref{1d-activation-table}, the value of 0.2 for domain\_train\_frequency results in no learning at all because the network is making random guesses. Due to this reason, we did not train every other activation functions except ReLU for this value.
+
+Table ~\ref{alpha-optimizer-table} and ~\ref{1d-optimizer-table} compare the accuracies for networks trained using ReLU as the activation function and changing the optimizers between Adam and RMSprop for different values of hyperparameters named domain\_loss\_factor\_propagation and domain\_train\_frequency. As can be seen, RMSprop clearly outperforms Adam.
+
+Another pattern which emerges from the tables is that slightly higher values of hyperparameters completely destroy the performance. For example, in Table ~\ref{1d-optimizer-table}, the value of 0.2 for domain\_train\_frequency results in no learning at all because the network is making random guesses. Due to this reason, we did not train RMSprop for this value.
 
 \begin{table}[h]
 \begin{center}
@@ -225,7 +229,7 @@ Another patter which emerges from the tables is that slightly higher values of h
 \hline
 Activation & \multicolumn{1}{|p{1cm}|}{Domain loss \%}& Books & Dvd & Music \\
 \hline
-Relu & 0.05 & 0.7375 & 0.756 & 0.715  \\
+ReLU & 0.05 & 0.7375 & 0.756 & 0.715  \\
  & 0.1 & 0.741 & 0.7465 & 0.703 \\
  & 0.2 & 0.742 & 0.7435 & 0.7155 \\
 \hline
@@ -233,11 +237,11 @@ tanh & 0.05 & 0.755 & 0.7655 & 0.7255 \\
  & 0.1 & 0.75 & 0.7515 & 0.7035 \\
  & 0.2 & 0.741 & 0.7355 & 0.7145 \\
 \hline
-elu & 0.05 & 0.7395 & 0.7515 & 0.712 \\
+ELU & 0.05 & 0.7395 & 0.7515 & 0.712 \\
  & 0.1 & 0.75 & 0.7515 & 0.727 \\
  & 0.2 & 0.7375 & 0.739 & 0.705 \\
 \hline
-softplus & 0.05 & 0.7545 & 0.766 & 0.7335 \\
+Softplus & 0.05 & 0.7545 & 0.766 & 0.7335 \\
  & 0.1 & 0.7585 & 0.763 & 0.747 \\
  & 0.2 & 0.744 & 0.746 & 0.728 \\
 \hline
@@ -254,17 +258,17 @@ softplus & 0.05 & 0.7545 & 0.766 & 0.7335 \\
 \hline
 Activation & \multicolumn{1}{|p{1cm}|}{Domain train frequency}& Books & Dvd & Music \\
 \hline
-relu & 0.05 & 0.766 & 0.7775 & 0.737 \\
+ReLU & 0.05 & 0.766 & 0.7775 & 0.737 \\
   & 0.1 & 0.7555 & 0.7585 & 0.7185 \\
   & 0.2 & 0.5 & 0.5 & 0.5 \\
 \hline
 tanh & 0.05 & 0.5 & 0.5 & 0.5  \\
   & 0.1 & 0.754 & 0.767 & 0.719 \\
 \hline
-elu & 0.05 & 0.755 & 0.7675 & 0.737 \\
+ELU & 0.05 & 0.755 & 0.7675 & 0.737 \\
   & 0.1 & 0.746 & 0.766 & 0.731 \\
 \hline
-softplus & 0.05 & 0.766 & 0.7675 & 0.7315 \\
+Softplus & 0.05 & 0.766 & 0.7675 & 0.7315 \\
   & 0.1 & 0.76 & 0.768 & 0.721 \\
 \hline
 \end{tabular}
