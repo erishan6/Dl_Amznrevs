@@ -324,8 +324,7 @@ We implemented the DANN based ~\cite{Ganin:2016} sentiment analysis and achieved
 
 Understanding activation functions is very important as they play a crucial role in the quality of deep neural networks. Neural Networks are trained using backpropapagation which requires differentiable activation functions. Backpropapagation uses gradient descent on this function to update the network weights. In our project, Softplus outperforms every other activation functions in both the approaches described above. While tanh performs equally great in first approach as Softplus but failed in the second approach. ReLU comes third with respect to the performance for this particular DANN in both approaches. Surprisingly ELU performs at par with ReLU.
 
-
-
+The internal parameters of a network play a very important role in efficiently and effectively training a network and produce accurate results. This is why we use various Optimization strategies and algorithms to update and calculate appropriate values of such network’s parameters which influences our network’s learning process. In our project, RMSprop outperforms Adam in the case of optimizers in both approaches by a descent margin.
 % include your own bib file like this:
 %\bibliographystyle{acl}
 %\bibliography{acl2015}
