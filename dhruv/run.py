@@ -6,7 +6,7 @@ import os
 import time
 import datetime
 import read
-from network import TextCNN
+from network import Network
 from tensorflow.contrib import learn
 from random import random
 
@@ -102,7 +102,7 @@ with tf.Graph().as_default():
     session_conf = tf.ConfigProto(allow_soft_placement=FLAGS.allow_soft_placement, log_device_placement=FLAGS.log_device_placement)
     sess = tf.Session(config=session_conf)
     with sess.as_default():
-        cnn = TextCNN(
+        cnn = Network(
             sequence_length=x_train.shape[1],
             num_classes=y_train.shape[1],
             vocab_size=len(vocab_processor.vocabulary_),

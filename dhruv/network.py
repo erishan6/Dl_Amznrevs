@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-class TextCNN(object):
+class Network(object):
     """
     A CNN for text classification.
     Uses an embedding layer, followed by a convolutional, max-pooling and softmax layer.
