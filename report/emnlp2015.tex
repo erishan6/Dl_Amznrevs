@@ -61,7 +61,7 @@
 
 \section{Introduction}
 
-We have tried to develop a sentiment classifier in this project for product reviews scraped from Amazon while addressing the problem of Domain Adaptation. This means that our classifier learns in the presence of a shift in the domains of training and testing environments. We achieve this by training a domain and sentiment classifier together using Adversarial training. In this approach, the loss of sentiment classifier is minimized while that of the domain classifier is maximized so that the sentiment predictions are made independent of domain. We first experiment with a straightforward CNN classifier to define a baseline performance and then modify the network by adding domain adversarial training to it.
+We have tried to develop a sentiment classifier in this project for product reviews scraped from Amazon while addressing the problem of Domain Adaptation. This means that our classifier learns in the presence of a shift in the domains of training and testing environments. We achieve this by training a domain and sentiment classifier together using Adversarial training. In this approach, the loss of sentiment classifier is minimized while that of the domain classifier is maximized so that the sentiment predictions are made independent of domain. We first experiment with a straightforward CNN classifier to define a baseline performance and then modify the network by adding domain adversarial training to it. The source code is present in the "adverserial-training-sentiment-analysis" repository on gitlab.
 
 We will also explore the following research questions:
 \begin{itemize}
