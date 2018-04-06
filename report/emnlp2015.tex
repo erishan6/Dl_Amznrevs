@@ -147,6 +147,8 @@ We introduce a different hyperparameter named domain\_train\_frequency. In this 
 \end{itemize}
 
 \subsection{Research Question: Effect of Activation Functions}
+Understanding activation functions is very important as they play a crucial role in the quality of deep neural networks. Neural Networks are trained using backpropagation which requires differentiable activation functions. Backpropagation uses gradient descent on this function to update the network weights.
+
 The purpose of activation functions is to add the non-linearity to the neural networks. So we trained the network for the two approaches described above using four different types of activation functions: [ReLU, Tanh, ELU and Softplus].
 We used standard implementations provided in Tensorflow with all the default parameters. The experiments section describes the comparative analysis of the performance of different activation functions named above.
 
@@ -230,13 +232,13 @@ Table ~\ref{alpha-optimizer-table} and ~\ref{1d-optimizer-table} compare the acc
 Another pattern which emerges from the tables is that slightly higher values of hyperparameters completely destroy the performance. For example, in Table ~\ref{1d-optimizer-table}, the value of 0.2 for domain\_train\_frequency results in no learning at all because the network is making random guesses. Due to this reason, we did not train RMSprop for this value.
 
 % common
-Based on the observations from the combined experiments of the team, we selected RMSprop as the optimizer and Softplus as the activation function. Table ~\ref{final-results-alpha-table} and ~\ref{final-results-1d-table} show the results for domain\_loss\_factor\_propagation = 0.05 and domain\_train\_frequency = 0.05 respectively. The values for these hyperparameters were also picked on the basis of their performance in the previous experiments.
+Based on the observations from the combined experiments of the team, we selected RMSprop as the optimizer and Softplus as the activation function. Table ~\ref{final-results-aplha-table} and ~\ref{final-results-1d-table} show the results for domain\_loss\_factor\_propagation = 0.05 and domain\_train\_frequency = 0.05 respectively. The values for these hyperparameters were also picked on the basis of their performance in the previous experiments.
 
 The model also performs quite well on a domain it has never seen before and only a slight performace degrade is seen. This substantiates that the model is indeed learning domain independent features and can therefore be generalised easily beyond the target domain used in training as well.
 
-Among the two approaches we implemented, both of them seem to provide quite similar performance. It is not clear which is superior than the other. In our opinion, it might be better to train both networks and then combine them into an ensemble model by taking the average.
+Among the two approaches we implemented, both of them seem to provide quite similar performance. It is not clear which is superior than the other. In our teams opinion, it might be better to train both networks and then combine them into an ensemble model by taking the average.
 
-In table ~\ref{cnn-table} the model trained on books and evaluated on Music only gives an accuracy of 0.6815, whereas in our network, the model trained on books-dvd pair and evaluated on Music gives an accuracy of 0.7915 in Table ~\ref{final-results-alpha-table} and 0.785 in Table ~\ref{final-results-1d-table}, which is a very significant improvement.
+In table ~\ref{cnn-table} the model trained on books and evaluated on Music only gives an accuracy of 0.6815, whereas in our network, the model trained on books-dvd pair and evaluated on Music gives an accuracy of 0.7915 in Table ~\ref{final-results-aplha-table} and 0.785 in Table ~\ref{final-results-1d-table}, which is a very significant improvement.
 
 \begin{table}[h]
 \begin{center}
@@ -382,11 +384,19 @@ dvd-music & 0.7685 & 0.8045 & 0.788 \\
 
 
 \section{Conclusion}
-We implemented the DANN based ~\cite{Ganin:2016} sentiment analysis and achieved better results with respect to the baseline model described in ~\cite{Britz} for the sentiment prediction. Hence the main task of DANN is achieved that is to learn features which is predictive of the source example labels, but uninformative about the domain of the input (source or target)
+We implemented the DANN based ~\cite{Ganin:2016} sentiment analysis and achieved better results with respect to the baseline model described in ~\cite{Britz} for the sentiment prediction. Hence the main task of DANN is achieved that is to learn features which is predictive of the source example labels, but uninformative about the domain of the input (source or target).
 
-Understanding activation functions is very important as they play a crucial role in the quality of deep neural networks. Neural Networks are trained using backpropagation which requires differentiable activation functions. Backpropagation uses gradient descent on this function to update the network weights. In our project, Softplus outperforms every other activation functions in both the approaches described above. While tanh performs equally great in the first approach as Softplus but failed in the second approach. ReLU comes third with respect to the performance for this particular DANN in both approaches. Surprisingly ELU performs at par with ReLU.
+% ishan
 
-The internal parameters of a network play a very important role in efficiently and effectively training a network and produce accurate results. This is why we use various Optimization strategies and algorithms to update and calculate appropriate values of such network’s parameters which influences our network’s learning process. In our project, RMSprop outperforms Adam in the case of optimizers in both approaches by a decent margin.
+The effect of activation functions was explored. Softplus outperforms every other activation functions in both the approaches described above. While tanh performs equally great in the first approach as Softplus but failed in the second approach. ReLU comes third with respect to the performance for this particular DANN in both approaches. Surprisingly ELU performs at par with ReLU.
+
+% dhruv
+The effect of using different optimizers was explored. In particular, a comparision between Adam and RMSprop showed that RMSprop significantly outperforms Adam in both the training approaches. Due to this, we used RMSprop in training the final network on all source-target domain pairs.
+
+% common
+We presented two approaches for implementing the training procedure and conducted experiments to measure the the performance of both of them. We trained models on a single source-target pair and trained models for different values of the hyperparameters associated with two approaches. In the end, the values of domain\_loss\_factor\_propagation = 0.05 and domain\_train\_frequency = 0.05 gave the best performance for the network using RMSprop as the optimizer and Softplus as the activation function.
+
+
 % include your own bib file like this:
 %\bibliographystyle{acl}
 %\bibliography{acl2015}
