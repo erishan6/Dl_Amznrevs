@@ -230,7 +230,13 @@ Table ~\ref{alpha-optimizer-table} and ~\ref{1d-optimizer-table} compare the acc
 Another pattern which emerges from the tables is that slightly higher values of hyperparameters completely destroy the performance. For example, in Table ~\ref{1d-optimizer-table}, the value of 0.2 for domain\_train\_frequency results in no learning at all because the network is making random guesses. Due to this reason, we did not train RMSprop for this value.
 
 % common
-Based on the observations from the above experiments, we trained the network with domain\_loss\_factor\_propagation = 0.05 and domain\_train\_frequency = 0.05 for all the domain pairs. The results are reported in ~\ref{final-results-table}.
+Based on the observations from the combined experiments of the team, we selected RMSprop as the optimizer and Softplus as the activation function. Table ~\ref{final-results-alpha-table} and ~\ref{final-results-1d-table} show the results for domain\_loss\_factor\_propagation = 0.05 and domain\_train\_frequency = 0.05 respectively. The values for these hyperparameters were also picked on the basis of their performance in the previous experiments.
+
+The model also performs quite well on a domain it has never seen before and only a slight performace degrade is seen. This substantiates that the model is indeed learning domain independent features and can therefore be generalised easily beyond the target domain used in training as well.
+
+Among the two approaches we implemented, both of them seem to provide quite similar performance. It is not clear which is superior than the other. In our opinion, it might be better to train both networks and then combine them into an ensemble model by taking the average.
+
+In table ~\ref{cnn-table} the model trained on books and evaluated on Music only gives an accuracy of 0.6815, whereas in our network, the model trained on books-dvd pair and evaluated on Music gives an accuracy of 0.7915 in Table ~\ref{final-results-alpha-table} and 0.785 in Table ~\ref{final-results-1d-table}, which is a very significant improvement.
 
 \begin{table}[h]
 \begin{center}
@@ -347,7 +353,7 @@ dvd-music & 0.72 & 0.7975 & 0.7645 \\
 \end{tabular}
 \end{center}
 \caption{ Approach 1: Training on all pairs with RMSprop optimizer and Softplus activation, domain loss \% = 0.05}
-\label{final-results-table}
+\label{final-results-aplha-table}
 \end{table}
 
 \begin{table}[h]
@@ -371,7 +377,7 @@ dvd-music & 0.7685 & 0.8045 & 0.788 \\
 \end{tabular}
 \end{center}
 \caption{ Approach 2: Training on all pairs with RMSprop optimizer and Softplus activation, domain train frequency = 0.05}
-\label{final-results-table}
+\label{final-results-1d-table}
 \end{table}
 
 
