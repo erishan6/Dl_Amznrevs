@@ -56,14 +56,12 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-  In this project, sentiment analysis of Amazon product reviews was
-  done across three different domains(viz. books, music and dvd). We
-  have used domain adversarial training for the neural network.
+  In this project, sentiment analysis of Amazon product reviews was done across three different domains(viz. books, music and dvd). We have implemented domain adversarial training for the neural network.
 \end{abstract}
 
 \section{Introduction}
 
-We have tried to develop a sentiment classifier in this project for product reviews scraped from Amazon while addressing the problem of Domain Adaptation. This means that our classifier learns in the presence of a shift in the domains of training and testing environments. We achieve this by training a domain and sentiment classifier together using Adverserial training. In this approach, the loss of sentiment classifier is minimized while that of the domain classifier is maximized so that the sentiment predictions are made independent of domain. We first experiment with a straightforward CNN classifier to define a baseline performance and then modify the network by adding domain adverserial training to it.
+We have tried to develop a sentiment classifier in this project for product reviews scraped from Amazon while addressing the problem of Domain Adaptation. This means that our classifier learns in the presence of a shift in the domains of training and testing environments. We achieve this by training a domain and sentiment classifier together using Adversarial training. In this approach, the loss of sentiment classifier is minimized while that of the domain classifier is maximized so that the sentiment predictions are made independent of domain. We first experiment with a straightforward CNN classifier to define a baseline performance and then modify the network by adding domain adversarial training to it.
 
 We will also explore the following research questions:
 \begin{itemize}
@@ -84,7 +82,7 @@ We take the model described in ~\cite{Britz} as the baseline and modify it to tr
 \label{fig:figure1}
 \end{figure}
 
-We trained different models on all domains (books, dvd, music) and then evaluated them on all the domains. Table ~\ref{cnn-table} gives a summary of the accuracies calculated on test set. Rows mean that a given dataset is evaluated on different models. Columns mean that a given model is evaluated on different data sets. Therefore, for row "books" and column "dvd" means that the model trained on "dvd" is evaluated on "books". As expected, the model performs best when both the training and testing domain is the same. The accuracies are thus the highest across the diagonal. This model uses "ReLU" as the activation and "Adam" as the optimizer.
+We trained different models on all domains (books, dvd, music) and then evaluated them on all the domains. Table ~\ref{cnn-table} gives a summary of the accuracies calculated on the test set. Rows mean that a given dataset is evaluated on different models. Columns mean that a given model is evaluated on different datasets. Therefore, for row "books" and column "dvd" means that the model trained on "dvd" is evaluated on "books". As expected, the model performs best when both the training and testing domain is the same. The accuracies are thus the highest across the diagonal. This model uses "ReLU" as the activation and "Adam" as the optimizer.
 
 
 \begin{table}[h]
@@ -106,7 +104,7 @@ Music & 0.709 & 0.7455 & 0.77 \\
 \section{Domain Adversarial Training}
 
 We followed the approach based on domain adaptation described in ~\cite{Ganin:2016} paper.
-In this approach, neural network architectures that are trained on labeled data from
+In this approach, neural network architectures are trained on labelled data from
 the source domain and unlabeled data from the target domain. As the training continues,
 the procedure encourages prominence of features that are biased towards for the main
 learning task on the source domain and unbiased towards the shift between the domains.
@@ -120,7 +118,7 @@ learning task on the source domain and unbiased towards the shift between the do
 \label{fig:figure2}
 \end{figure}
 
-The architecture includes feature extractor(green), label predictor(blue) and domain classifier(red). In Layer 1,  we convert the input sentences into vector space using using word embedding from GLoVe. This outputs a matrix for each review. In Layer 2 and 3,  we use CNN and then max-pool to convert input matrix into a column vector.  In Layer 4, single layer with activation function (feature extractor). In Layer 5 and 6, single layer with softmax with feature extractor output as the input to both layers.
+The architecture includes feature extractor(green), label predictor(blue) and domain classifier(red). In Layer 1,  we convert the input sentences into vector space using word embedding from GLoVe. This outputs a matrix for each review. In Layer 2 and 3,  we use CNN and then max-pool to convert input matrix into a column vector.  In Layer 4, single layer with activation function (feature extractor). In Layer 5 and 6, single layer with softmax with feature extractor output as the input to both layers.
 
 \subsection{Our Approach}
 \begin{figure}[htb]
@@ -134,7 +132,7 @@ The architecture includes feature extractor(green), label predictor(blue) and do
 Our objective is to minimize the label loss and maximise the domain loss. We tried a couple of ways to achieve this and we report two techniques which worked the best.
 
 \subsubsection{Approach 1}
-We have introduced a hyperparameter in the network named domain\_loss\_factor\_propagation i.e. we include a percentage of domain loss in the in the total loss at every step time. In this way, our network tries to minimize the combined loss of label prediction loss along with small factor of domain classification loss. The loss equation being minimised is:
+We have introduced a hyperparameter in the network named domain\_loss\_factor\_propagation i.e. we include a percentage of domain loss in the in the total loss at every step time. In this way, our network tries to minimize the combined loss of label prediction loss along with the small factor of domain classification loss. The loss equation being minimised is:
 \begin{itemize}
   \item label\_loss + domain\_loss\_factor\_propagation*(1/domain\_loss)
 \end{itemize}
@@ -150,7 +148,7 @@ We introduce a different hyperparameter named domain\_train\_frequency. In this 
 
 \subsection{Research Question: Effect of Activation Functions}
 Activation functions which are easily differentiable and easy to train should be used in neural networks. To briefly describe the purpose of activation functions is to add the non-linearity to the neural networks. So we trained the network for the two approaches described above using four different types of activation functions: [ReLU, Tanh, ELU and Softplus].
-We used stardard implementations provided in Tensorflow with all the default parameters. The experiments section describes the a comparative analysis of the performance of different activation functions named above.
+We used standard implementations provided in Tensorflow with all the default parameters. The experiments section describes the comparative analysis of the performance of different activation functions named above.
 
 Brief description of the described activation functions are as follows:-
 \subsubsection{ReLU}
@@ -159,7 +157,7 @@ $f(x)= \max(0,x), f'(x) = \begin{cases}
       1 & x\geq 0 \\
    \end{cases}$
 
-The ReLU is the most used activation function in the world right now. Since, it is used in almost all the convolutional neural networks or deep learning. But the issue is that all the negative values become zero immediately which decreases the ability of the model to fit or train from the data properly. That means any negative input given to the ReLU activation function turns the value into zero immediately in the graph, which in turns affects the resulting graph by not mapping the negative values appropriately.
+The ReLU is the most used activation function in the world right now. Since it is used in almost all the convolutional neural networks or deep learning. But the issue is that all the negative values become zero immediately which decreases the ability of the model to fit or train from the data properly. That means any negative input given to the ReLU activation function turns the value into zero immediately in the graph, which in turns affects the resulting graph by not mapping the negative values appropriately.
 \begin{figure}[htb]
 \begin{center}
 \includegraphics[width=\columnwidth]{Rectifier_and_softplus_functions.png}
@@ -171,7 +169,7 @@ The ReLU is the most used activation function in the world right now. Since, it 
 \subsubsection{Softplus}
 $f(x)= \log(1+\exp{x}), f'(x) = \frac{1}{1+exp{-x}}$
 
-Softplus is a newer function than Sigmoid and Tanh. It is firstly introduced in 2001. Softplus is an alternative of traditional functions because it is differentiable and its derivative is easy to demonstrate.
+Softplus is a newer function than Sigmoid and Tanh. It is firstly introduced in 2001. Softplus is an alternative to traditional functions because it is differentiable and its derivative is easy to demonstrate.
 
 \subsubsection{Tanh}
 \begin{figure}[htb]
@@ -204,21 +202,21 @@ $f'(x) = \begin{cases}
 \label{fig:figure6}
 \end{figure}
 
-ELU is very similiar to ReLU except negative inputs. They are both in identity function form for non-negative inputs. On the other hand, ELU becomes smooth slowly until its output equal to -α whereas ReLU sharply smoothes. Different to other activation functions, ELU has a extra alpha constant which should be positive number.
+ELU is very similar to ReLU except for negative inputs. They are both in identity function form for non-negative inputs. On the other hand, ELU becomes smooth slowly until its output equal to -α whereas ReLU sharply smoothes. Different to other activation functions, ELU has an extra alpha constant which should be a positive number.
 
 \subsection{Research Question: Optimizers}
 We trained the network for the two approaches described above using two different types of gradient descent optimizers: RMSprop and Adam. To briefly describe them, RMSprop divides the gradient by a running average of its recent magnitude while Adam in addition also uses the average of the second moments of the gradients.
 
-We used stardard implementations provided in Tensorflow with all the default parameters except epsilon (which is a small constant provided for avoiding zero denominator) which given a value of 1e-3. The loss equation used is as stated in the two approaches above.
+We used standard implementations provided in Tensorflow with all the default parameters except epsilon (which is a small constant provided for avoiding zero denominators) which given a value of 1e-3. The loss equation used is as stated in the two approaches above.
 
-A detailed description of how the optimization algorithm works is beyond the scope of this work. The experiments section describes the a comparative analysis of the performance of using optimizers.
+A detailed description of how the optimization algorithm works is beyond the scope of this work. The experiments section describes the comparative analysis of the performance of using optimizers.
 
 
 \section{Dataset}
 The data is from 3 different domains (books, dvds, movies) and 3 different languages (German, English, French).
 We have only used the English dataset for this work. The data has been obtained from: \url{https://www.uni-weimar.de/en/media/chairs/computer-science-and-media/webis/corpora/corpus-webis-cls-10/} and it is described in~\cite{PB:2010}.
 
-For each language and each domain there are 2000 training examples and 2000 test examples. The ratings to positive/negative sentiment are mapped as follows: 1.0, 2.0: negative, 4.0, 5.0: positive. There are no instances with a rating of 3.0. The datasets are balanced, this means for each language and each domain 50\% of the items have a positive and 50\% have a negative rating.
+For each language and each domain, there are 2000 training examples and 2000 test examples. The ratings to positive/negative sentiment are mapped as follows: 1.0, 2.0: negative, 4.0, 5.0: positive. There are no instances with a rating of 3.0. The datasets are balanced, this means for each language and each domain 50\% of the items have a positive and 50\% have a negative rating.
 
 \section{Experiments and Results}
 Table~\ref{alpha-activation-table} and~\ref{1d-activation-table} compare the accuracies for networks trained using Adam as the optimizer and changing the activation functions from the set[ReLU, Tanh, ELU and Softplus] for different values of hyperparameters named domain\_loss\_factor\_propagation and domain\_train\_frequency. As can be seen, Softplus clearly outperforms every other activation functions.
@@ -352,11 +350,11 @@ dvd-music & 0.72 & 0.7685 & 0.7975 & 0.8045 & 0.7645 & 0.788 \\
 
 
 \section{Conclusion}
-We implemented the DANN based ~\cite{Ganin:2016} sentiment analysis and achieved better results with respect to the baseline model described in ~\cite{Britz} for the sentiment prediction. Hence the main task of DANN is achieved that is to learn a features which is predictive of the source example labels, but uninformative about the domain of the input (source or target)
+We implemented the DANN based ~\cite{Ganin:2016} sentiment analysis and achieved better results with respect to the baseline model described in ~\cite{Britz} for the sentiment prediction. Hence the main task of DANN is achieved that is to learn features which is predictive of the source example labels, but uninformative about the domain of the input (source or target)
 
-Understanding activation functions is very important as they play a crucial role in the quality of deep neural networks. Neural Networks are trained using backpropapagation which requires differentiable activation functions. Backpropapagation uses gradient descent on this function to update the network weights. In our project, Softplus outperforms every other activation functions in both the approaches described above. While tanh performs equally great in first approach as Softplus but failed in the second approach. ReLU comes third with respect to the performance for this particular DANN in both approaches. Surprisingly ELU performs at par with ReLU.
+Understanding activation functions is very important as they play a crucial role in the quality of deep neural networks. Neural Networks are trained using backpropagation which requires differentiable activation functions. Backpropagation uses gradient descent on this function to update the network weights. In our project, Softplus outperforms every other activation functions in both the approaches described above. While tanh performs equally great in the first approach as Softplus but failed in the second approach. ReLU comes third with respect to the performance for this particular DANN in both approaches. Surprisingly ELU performs at par with ReLU.
 
-The internal parameters of a network play a very important role in efficiently and effectively training a network and produce accurate results. This is why we use various Optimization strategies and algorithms to update and calculate appropriate values of such network’s parameters which influences our network’s learning process. In our project, RMSprop outperforms Adam in the case of optimizers in both approaches by a descent margin.
+The internal parameters of a network play a very important role in efficiently and effectively training a network and produce accurate results. This is why we use various Optimization strategies and algorithms to update and calculate appropriate values of such network’s parameters which influences our network’s learning process. In our project, RMSprop outperforms Adam in the case of optimizers in both approaches by a decent margin.
 % include your own bib file like this:
 %\bibliographystyle{acl}
 %\bibliography{acl2015}
