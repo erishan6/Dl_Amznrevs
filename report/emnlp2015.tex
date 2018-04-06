@@ -118,7 +118,7 @@ learning task on the source domain and unbiased towards the shift between the do
 \label{fig:figure2}
 \end{figure}
 
-The architecture includes feature extractor(green), label predictor(blue) and domain classifier(red). In Layer 1,  we convert the input sentences into vector space using word embedding from GLoVe. This outputs a matrix for each review. In Layer 2 and 3,  we use CNN and then max-pool to convert input matrix into a column vector.  In Layer 4, single layer with activation function (feature extractor). In Layer 5 and 6, single layer with softmax with feature extractor output as the input to both layers.
+The architecture includes feature extractor(green), label predictor(blue) and domain classifier(red). In figure ~\ref{fig:figure1}, the network upto max pool layer (inclusive) is the feature extractor. The label predictor is the final fully connected layer. The domain classifier, which is not shown in figure ~\ref{fig:figure1} is also a fully connected layer and takes the same input as the label predictor. Figure ~\ref{fig:figure3} shows the tensorboard visualisation of figure ~\ref{fig:figure2} as implemented by us.
 
 \subsection{Our Approach}
 \begin{figure}[htb]
@@ -147,7 +147,7 @@ We introduce a different hyperparameter named domain\_train\_frequency. In this 
 \end{itemize}
 
 \subsection{Research Question: Effect of Activation Functions}
-Activation functions which are easily differentiable and easy to train should be used in neural networks. To briefly describe the purpose of activation functions is to add the non-linearity to the neural networks. So we trained the network for the two approaches described above using four different types of activation functions: [ReLU, Tanh, ELU and Softplus].
+The purpose of activation functions is to add the non-linearity to the neural networks. So we trained the network for the two approaches described above using four different types of activation functions: [ReLU, Tanh, ELU and Softplus].
 We used standard implementations provided in Tensorflow with all the default parameters. The experiments section describes the comparative analysis of the performance of different activation functions named above.
 
 Brief description of the described activation functions are as follows:-
@@ -157,7 +157,7 @@ $f(x)= \max(0,x), f'(x) = \begin{cases}
       1 & x\geq 0 \\
    \end{cases}$
 
-The ReLU is the most used activation function in the world right now. Since it is used in almost all the convolutional neural networks or deep learning. But the issue is that all the negative values become zero immediately which decreases the ability of the model to fit or train from the data properly. That means any negative input given to the ReLU activation function turns the value into zero immediately in the graph, which in turns affects the resulting graph by not mapping the negative values appropriately.
+ReLU is the most used activation function in the world right now. Since it is used in almost all the convolutional neural networks or deep learning. But the issue is that all the negative values become zero immediately which decreases the ability of the model to fit or train from the data properly. That means any negative input given to the ReLU activation function turns the value into zero immediately in the graph, which in turns affects the resulting graph by not mapping the negative values appropriately.
 \begin{figure}[htb]
 \begin{center}
 \includegraphics[width=\columnwidth]{Rectifier_and_softplus_functions.png}
@@ -169,7 +169,7 @@ The ReLU is the most used activation function in the world right now. Since it i
 \subsubsection{Softplus}
 $f(x)= \log(1+\exp{x}), f'(x) = \frac{1}{1+exp{-x}}$
 
-Softplus is a newer function than Sigmoid and Tanh. It is firstly introduced in 2001. Softplus is an alternative to traditional functions because it is differentiable and its derivative is easy to demonstrate.
+Softplus is a newer function than Sigmoid and Tanh. It was firstly introduced in 2001. Softplus is an alternative to traditional functions because it is differentiable and it's derivative is easy to demonstrate.
 
 \subsubsection{Tanh}
 \begin{figure}[htb]
@@ -202,14 +202,14 @@ $f'(x) = \begin{cases}
 \label{fig:figure6}
 \end{figure}
 
-ELU is very similar to ReLU except for negative inputs. They are both in identity function form for non-negative inputs. On the other hand, ELU becomes smooth slowly until its output equal to -α whereas ReLU sharply smoothes. Different to other activation functions, ELU has an extra alpha constant which should be a positive number.
+ELU is very similar to ReLU except for negative inputs. They both have identity function form for non-negative inputs. On the other hand, ELU becomes smooth slowly until its output is equal to -α whereas ReLU smoothes sharply. Different to other activation functions, ELU has an extra alpha constant which should be a positive number.
 
 \subsection{Research Question: Optimizers}
-We trained the network for the two approaches described above using two different types of gradient descent optimizers: RMSprop and Adam. To briefly describe them, RMSprop divides the gradient by a running average of its recent magnitude while Adam in addition also uses the average of the second moments of the gradients.
+Optimizers play an important role in the training process because they are responsible to minimize the loss of the network. Therefore a better optimizer can lead to faster and easier convergence of the objective function. We trained the network for the two approaches described above using two different types of gradient descent optimizers: RMSprop and Adam. To briefly describe them, RMSprop divides the gradient by a running average of its recent magnitude while Adam, in addition, also uses the average of the second moments of the gradients.
 
 We used standard implementations provided in Tensorflow with all the default parameters except epsilon (which is a small constant provided for avoiding zero denominators) which given a value of 1e-3. The loss equation used is as stated in the two approaches above.
 
-A detailed description of how the optimization algorithm works is beyond the scope of this work. The experiments section describes the comparative analysis of the performance of using optimizers.
+A detailed description of how the optimization algorithm works is beyond the scope of this report. The experiments section describes the comparative analysis of the performance of using optimizers.
 
 
 \section{Dataset}
@@ -219,13 +219,18 @@ We have only used the English dataset for this work. The data has been obtained 
 For each language and each domain, there are 2000 training examples and 2000 test examples. The ratings to positive/negative sentiment are mapped as follows: 1.0, 2.0: negative, 4.0, 5.0: positive. There are no instances with a rating of 3.0. The datasets are balanced, this means for each language and each domain 50\% of the items have a positive and 50\% have a negative rating.
 
 \section{Experiments and Results}
-Table~\ref{alpha-activation-table} and~\ref{1d-activation-table} compare the accuracies for networks trained using Adam as the optimizer and changing the activation functions from the set[ReLU, Tanh, ELU and Softplus] for different values of hyperparameters named domain\_loss\_factor\_propagation and domain\_train\_frequency. As can be seen, Softplus clearly outperforms every other activation functions.
+% ishan
+Table~\ref{alpha-activation-table} and~\ref{1d-activation-table} compare the accuracies for networks trained using Adam as the optimizer and changing the activation functions from the set[ReLU, Tanh, ELU and Softplus] for different values of hyperparameters named domain\_loss\_factor\_propagation and domain\_train\_frequency. As can be seen, Softplus has the maximum accuracies and therefore clearly outperforms every other activation functions.
 
-Another pattern which emerges from the tables is that son increasing the values, the performance gets deteriorated. For example, in Table ~\ref{1d-activation-table}, the value of 0.2 for domain\_train\_frequency results in no learning at all because the network is making random guesses. Due to this reason, we did not train every other activation functions except ReLU for this value.
+Another pattern which emerges from the tables is that on increasing the values, the performance gets deteriorated. For example, in Table ~\ref{1d-activation-table}, the value of 0.2 for domain\_train\_frequency results in no learning at all because the network is making random guesses. Due to this reason, we did not train any other activation function besides ReLU for this value.
 
-Table ~\ref{alpha-optimizer-table} and ~\ref{1d-optimizer-table} compare the accuracies for networks trained using ReLU as the activation function and changing the optimizers between Adam and RMSprop for different values of hyperparameters named domain\_loss\_factor\_propagation and domain\_train\_frequency. As can be seen, RMSprop clearly outperforms Adam.
+% dhruv
+Table ~\ref{alpha-optimizer-table} and ~\ref{1d-optimizer-table} compare the accuracies for networks trained using ReLU as the activation function and changing the optimizers between Adam and RMSprop for different values of the hyperparameters domain\_loss\_factor\_propagation and domain\_train\_frequency. As can be seen, RMSprop has the maximum accuracy and therefore  clearly outperforms Adam.
 
 Another pattern which emerges from the tables is that slightly higher values of hyperparameters completely destroy the performance. For example, in Table ~\ref{1d-optimizer-table}, the value of 0.2 for domain\_train\_frequency results in no learning at all because the network is making random guesses. Due to this reason, we did not train RMSprop for this value.
+
+% common
+Based on the observations from the above experiments, we trained the network with domain\_loss\_factor\_propagation = 0.05 and domain\_train\_frequency = 0.05 for all the domain pairs. The results are reported in ~\ref{final-results-table}.
 
 \begin{table}[h]
 \begin{center}
