@@ -326,32 +326,53 @@ RMSprop & 0.05 & 0.784 & 0.7995 & 0.766 \\
 
 
 % new table starts
-\begin{table*}[t]
+\begin{table}[h]
 \begin{center}
-\begin{tabular}{|c|c|c|c|c|c|c|}
+\begin{tabular}{|c|c|c|c|}
 \hline
-Model pair & \multicolumn{2}{p{1cm}|}{Books} & \multicolumn{2}{p{1cm}|}{Music} & \multicolumn{2}{p{1cm}|}{Dvd} \\
+Model pair & Books & Music & DVD \\
 \hline
-& \multicolumn{1}{p{1cm}|}{loss \%} & \multicolumn{1}{p{1cm}|}{train frequency} & \multicolumn{1}{p{1cm}|}{loss \%} & \multicolumn{1}{p{1cm}|}{train frequency} & \multicolumn{1}{p{1cm}|}{loss \%} & \multicolumn{1}{p{1cm}|}{train frequency} \\
+books-music & 0.7845 & 0.815 & 0.7755 \\
 \hline
-books-music & 0.7845 & 0.793 & 0.815 & 0.8115 & 0.7755 & 0.7765 \\
+books-dvd & 0.778 & 0.7915 & 0.794 \\
 \hline
-books-dvd & 0.778 & 0.7925 & 0.7915 & 0.785 & 0.794 & 0.805 \\
+music-books & 0.792 & 0.813 & 0.783 \\
 \hline
-music-books & 0.792 & 0.7925 & 0.813 & 0.803 & 0.783 & 0.77 \\
+music-dvd & 0.773 & 0.8165 & 0.789 \\
 \hline
-music-dvd & 0.773 & 0.7665 & 0.8165 & 0.8125 & 0.789 & 0.7835 \\
+dvd-books & 0.7795 & 0.79 & 0.815 \\
 \hline
-dvd-books & 0.7795 & 0.7965 & 0.79 & 0.7815 & 0.815 & 0.795 \\
-\hline
-dvd-music & 0.72 & 0.7685 & 0.7975 & 0.8045 & 0.7645 & 0.788 \\
+dvd-music & 0.72 & 0.7975 & 0.7645 \\
 \hline
 \end{tabular}
 \end{center}
-\caption{ Training on all pairs with RMSprop optimizer and Softplus activation, domain loss \% = 0.05 and domain train frequency = 0.05}
+\caption{ Approach 1: Training on all pairs with RMSprop optimizer and Softplus activation, domain loss \% = 0.05}
 \label{final-results-table}
-\end{table*}
+\end{table}
 
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+Model pair & Books & Music & DVD \\
+\hline
+books-music & 0.793 & 0.8115 & 0.7765 \\
+\hline
+books-dvd & 0.7925 & 0.785 & 0.805 \\
+\hline
+music-books & 0.7925 & 0.803 & 0.77 \\
+\hline
+music-dvd & 0.7665 & 0.8125 & 0.7835 \\
+\hline
+dvd-books & 0.7965 & 0.7815 & 0.795 \\
+\hline
+dvd-music & 0.7685 & 0.8045 & 0.788 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{ Approach 2: Training on all pairs with RMSprop optimizer and Softplus activation, domain train frequency = 0.05}
+\label{final-results-table}
+\end{table}
 
 
 \section{Conclusion}
