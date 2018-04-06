@@ -118,7 +118,7 @@ learning task on the source domain and unbiased towards the shift between the do
 \label{fig:figure2}
 \end{figure}
 
-The architecture includes feature extractor(green), label predictor(blue) and domain classifier(red). In figure ~\ref{fig:figure1}, the network upto max pool layer (inclusive) is the feature extractor. The label predictor is the final fully connected layer. The domain classifier, which is not shown in figure ~\ref{fig:figure1} is also a fully connected layer and takes the same input as the label predictor. Figure ~\ref{fig:figure3} shows the tensorboard visualisation of figure ~\ref{fig:figure2} as implemented by us.
+The architecture includes feature extractor(green), label predictor(blue) and domain classifier(red). In figure ~\ref{fig:figure1}, the network up to max pool layer (inclusive) is the feature extractor. The label predictor is the final fully connected layer. The domain classifier, which is not shown in figure ~\ref{fig:figure1} is also a fully connected layer and takes the same input as the label predictor. Figure ~\ref{fig:figure3} shows the tensorboard visualisation of figure ~\ref{fig:figure2} as implemented by us.
 
 \subsection{Our Approach}
 \begin{figure}[htb]
@@ -171,7 +171,7 @@ ReLU is the most used activation function in the world right now. Since it is us
 \subsubsection{Softplus}
 $f(x)= \log(1+\exp{x}), f'(x) = \frac{1}{1+exp{-x}}$
 
-Softplus is a newer function than Sigmoid and Tanh. It was firstly introduced in 2001. Softplus is an alternative to traditional functions because it is differentiable and it's derivative is easy to demonstrate.
+Softplus is a newer function than Sigmoid and Tanh. It was first introduced in 2001. Softplus is an alternative to traditional functions because it is differentiable and it's derivative is easy to demonstrate.
 
 \subsubsection{Tanh}
 \begin{figure}[htb]
@@ -227,18 +227,18 @@ Table~\ref{alpha-activation-table} and~\ref{1d-activation-table} compare the acc
 Another pattern which emerges from the tables is that on increasing the values, the performance gets deteriorated. For example, in Table ~\ref{1d-activation-table}, the value of 0.2 for domain\_train\_frequency results in no learning at all because the network is making random guesses. Due to this reason, we did not train any other activation function besides ReLU for this value.
 
 % dhruv
-Table ~\ref{alpha-optimizer-table} and ~\ref{1d-optimizer-table} compare the accuracies for networks trained using ReLU as the activation function and changing the optimizers between Adam and RMSprop for different values of the hyperparameters domain\_loss\_factor\_propagation and domain\_train\_frequency. As can be seen, RMSprop has the maximum accuracy and therefore  clearly outperforms Adam.
+Table ~\ref{alpha-optimizer-table} and ~\ref{1d-optimizer-table} compare the accuracies for networks trained using ReLU as the activation function and changing the optimizers between Adam and RMSprop for different values of the hyperparameters domain\_loss\_factor\_propagation and domain\_train\_frequency. As can be seen, RMSprop has the maximum accuracy and therefore clearly outperforms Adam.
 
 Another pattern which emerges from the tables is that slightly higher values of hyperparameters completely destroy the performance. For example, in Table ~\ref{1d-optimizer-table}, the value of 0.2 for domain\_train\_frequency results in no learning at all because the network is making random guesses. Due to this reason, we did not train RMSprop for this value.
 
 % common
 Based on the observations from the combined experiments of the team, we selected RMSprop as the optimizer and Softplus as the activation function. Table ~\ref{final-results-aplha-table} and ~\ref{final-results-1d-table} show the results for domain\_loss\_factor\_propagation = 0.05 and domain\_train\_frequency = 0.05 respectively. The values for these hyperparameters were also picked on the basis of their performance in the previous experiments.
 
-The model also performs quite well on a domain it has never seen before and only a slight performace degrade is seen. This substantiates that the model is indeed learning domain independent features and can therefore be generalised easily beyond the target domain used in training as well.
+The model also performs quite well on a domain it has never seen before and only a slight performance degrade is seen. This substantiates that the model is indeed learning domain independent features and can, therefore, be generalised easily beyond the target domain used in training as well.
 
-Among the two approaches we implemented, both of them seem to provide quite similar performance. It is not clear which is superior than the other. In our teams opinion, it might be better to train both networks and then combine them into an ensemble model by taking the average.
+Among the two approaches we implemented, both of them seem to provide quite similar performance. It is not clear which is superior to the other. In our team's opinion, it might be better to train both networks and then combine them into an ensemble model by taking the average.
 
-In table ~\ref{cnn-table} the model trained on books and evaluated on Music only gives an accuracy of 0.6815, whereas in our network, the model trained on books-dvd pair and evaluated on Music gives an accuracy of 0.7915 in Table ~\ref{final-results-aplha-table} and 0.785 in Table ~\ref{final-results-1d-table}, which is a very significant improvement.
+In table ~\ref{cnn-table} the model trained on books and evaluated on Music only gives an accuracy of 0.6815, whereas, in our network, the model trained on books-dvd pair and evaluated on Music gives an accuracy of 0.7915 in Table ~\ref{final-results-aplha-table} and 0.785 in Table ~\ref{final-results-1d-table}, which is a very significant improvement.
 
 \begin{table}[h]
 \begin{center}
@@ -391,10 +391,10 @@ We implemented the DANN based ~\cite{Ganin:2016} sentiment analysis and achieved
 The effect of activation functions was explored. Softplus outperforms every other activation functions in both the approaches described above. While tanh performs equally great in the first approach as Softplus but failed in the second approach. ReLU comes third with respect to the performance for this particular DANN in both approaches. Surprisingly ELU performs at par with ReLU.
 
 % dhruv
-The effect of using different optimizers was explored. In particular, a comparision between Adam and RMSprop showed that RMSprop significantly outperforms Adam in both the training approaches. Due to this, we used RMSprop in training the final network on all source-target domain pairs.
+The effect of using different optimizers was explored. In particular, a comparison between Adam and RMSprop showed that RMSprop significantly outperforms Adam in both the training approaches. Due to this, we used RMSprop in training the final network on all source-target domain pairs.
 
 % common
-We presented two approaches for implementing the training procedure and conducted experiments to measure the the performance of both of them. We trained models on a single source-target pair and trained models for different values of the hyperparameters associated with two approaches. In the end, the values of domain\_loss\_factor\_propagation = 0.05 and domain\_train\_frequency = 0.05 gave the best performance for the network using RMSprop as the optimizer and Softplus as the activation function.
+We presented two approaches for implementing the training procedure and conducted experiments to measure the performance of both of them. We trained models on a single source-target pair and trained models for different values of the hyperparameters associated with two approaches. In the end, the values of domain\_loss\_factor\_propagation = 0.05 and domain\_train\_frequency = 0.05 gave the best performance for the network using RMSprop as the optimizer and Softplus as the activation function.
 
 
 % include your own bib file like this:
