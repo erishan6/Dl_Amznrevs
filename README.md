@@ -1,12 +1,12 @@
-#Sentiment Analysis of Amazon Product Reviews Using Domain Adversarial Training
+## Sentiment Analysis of Amazon Product Reviews Using Domain Adversarial Training
 
-The dataset has been obtained from: https://www. uni-weimar.de/en/media/chairs/ computer-science-and-media/webis/ corpora/corpus-webis-cls-10/
+The dataset has been obtained from: https://www.uni-weimar.de/en/media/chairs/computer-science-and-media/webis/corpora/corpus-webis-cls-10/
 
  ## Requirements
 
 - Python 3
 - Tensorflow > 0.12
-- Numpy
+- Numpy 
 
 ## Training
 
